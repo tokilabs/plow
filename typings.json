@@ -1,0 +1,17 @@
+{
+  "globalDependencies": {
+    "gulp-typedoc": "registry:dt/gulp-typedoc#0.0.0+20160316155526",
+    "gulp-util": "registry:dt/gulp-util#0.0.0+20160316155526",
+    "gulp-watch": "registry:dt/gulp-watch#4.1.1+20160316155526",
+    "mocha": "registry:env/mocha#2.2.5+20160723033700",
+    "node": "registry:env/node#6.0.0+20160813135048"
+  },
+  "dependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160723033700",
+    "chalk": "registry:npm/chalk#1.1.1+20160812215109",
+    "gulp": "registry:npm/gulp#4.0.0-alpha.2+20160817105618",
+    "node-uuid": "registry:npm/node-uuid#1.4.7+20160723033700",
+    "through2": "registry:npm/through2#2.0.0+20160817101636",
+    "vinyl": "registry:npm/vinyl#1.2.0+20160817093728"
+  }
+}

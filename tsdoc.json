@@ -1,0 +1,54 @@
+{
+	"tags":
+	{
+		"allowUnknownTags" : true
+	},
+	"plugins":[
+		 "plugins/markdown"
+		,"node_modules/tsdoc/template/plugins/TSDoc.js"
+	],
+	"opts":
+	{
+		"template": "docdash",
+		"recurse": "true",
+		"fixedMenu": "menu.md"
+	},
+  "templates": {
+		"cleverLinks"     : true,
+		"monospaceLinks"  : false,
+		"______________________________________": "For DocStrap themes",
+    "dateFormat": "ddd MMM Do YYYY",
+    "outputSourceFiles": true,
+    "outputSourcePath": true,
+    "systemName": "DocStrap",
+    "footer": "<link rel='stylesheet' href='styles/custom.css'/>",
+    "copyright": "Copyright © 2013 cashfarm - Unlicensed",
+    "navType": "vertical",
+    "theme": "yeti",
+    "linenums": false,
+    "collapseSymbols": false,
+    "inverseNav": false,
+    "highlightTutorialCode": true,
+    "protocol": "html://",
+		"syntaxTheme": "dark"
+  },
+	"source":
+	{
+		"includePattern": "\\.ts$"
+	},
+	"markdown"  : {
+		"parser"   : "gfm",
+		"hardwrap" : true
+	},
+	"tsdoc":{
+		"source"		  : "src/",
+		"destination"	: "docs/",
+		"tutorials"		: "wiki/",
+		"systemName"	: "cashfarm Core",
+		"footer"		  : "<link rel='stylesheet' href='styles/custom.css'/>",
+		"copyright"		: "Copyright © 2013 cashfarm - Unlicensed",
+		"outputSourceFiles" : true,
+		"commentsOnly": true,
+		"excludeTutorials": "_Sidebar"
+	}
+}

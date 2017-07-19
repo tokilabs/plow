@@ -1,0 +1,11 @@
+{
+  "artifacts": [],
+  "remote": {
+    "type": "copy",
+    "registry": "npm",
+    "hash": "0502045f-4f12-4978-afbe-3162020821c1-1500502711706",
+    "reference": "/projects/doare/api-2.0/@cashfarm/plow"
+  },
+  "registry": "npm",
+  "hash": "0502045f-4f12-4978-afbe-3162020821c1-1500502711706"
+}

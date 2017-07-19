@@ -1,0 +1,5 @@
+node_modules/
+lib/
+typings/
+*.log
+*.tgz

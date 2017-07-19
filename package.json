@@ -1,0 +1,115 @@
+{
+  "name": "@cashfarm/plow",
+  "version": "0.1.0",
+  "description": "Library for validating input data and parameters",
+  "author": "Saulo Vallory <saulo@cashfarm.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/cashfarm/plow#README",
+  "bugs": {
+    "url": "https://github.com/cashfarm/plow/issues"
+  },
+  "keywords": [
+    "shiny"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cashfarm/plow.git"
+  },
+  "pre-commit": "lint",
+  "scripts": {
+    "build": "yarn clean && yarn run lint && yarn run test && yarn run tsc && yarn run lint-pkg",
+    "build:tests": "tsc && tsc -p tests/",
+    "clean": "rm -rf lib/",
+    "check": "nsp check",
+    "cover": "nyc npm test",
+    "dev": "tsc -p src",
+    "lint": "tslint --project ./tsconfig.json -c ./tslint.json --type-check ./src/**/*.ts",
+    "lint-pkg": "ts-package-lint",
+    "pretest": "rimraf ./coverage && npm run lint && npm run build",
+    "test": "NODE_ENV=test DEBUG=test* DEBUG_COLORS=true ava",
+    "tsc": "node_modules/.bin/tsc"
+  },
+  "dependencies": {
+    "@cashfarm/lang": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.1",
+    "@types/chalk": "^0.4.31",
+    "@types/gulp": "^4.0.4",
+    "@types/gulp-typedoc": "^0.0.30",
+    "@types/gulp-util": "^3.0.31",
+    "@types/gulp-watch": "^4.1.31",
+    "@types/highlight.js": "^9.1.9",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.13",
+    "@types/source-map-support": "^0.4.0",
+    "chai": "^3.5.0",
+    "chalk": "^1.1.3",
+    "gulp": "^3.9.1",
+    "gulp-concat-filenames": "^1.2.0",
+    "gulp-recursive-folder": "^0.9.4",
+    "gulp-typedoc": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "gulp-watch": "^4.3.9",
+    "gulpclass": "^0.1.1",
+    "mocha": "^3.0.2",
+    "source-map-support": "^0.4.2",
+    "trash": "^4.0.1",
+    "ts-node": "^3.2.0",
+    "ts-package-lint": "^0.2.2",
+    "tsdoc": "^0.0.4",
+    "tslint": "5.x",
+    "tslint-microsoft-contrib": "^5.0.1",
+    "typedoc": "^0.7.1",
+    "typedoc-plugin-external-module-name": "^1.0.2",
+    "typescript": "^2.3.x",
+    "typescript-starter": "^1.4.1",
+    "typings": "^1.3.2"
+  },
+  "ava": {
+    "files": [
+      "tests/compiled/**/*.test.js"
+    ],
+    "concurrency": 5,
+    "failFast": true,
+    "verbose": true,
+    "tap": false
+  },
+  "nyc": {
+    "lines": 20,
+    "statements": 5,
+    "functions": 5,
+    "branches": 5,
+    "include": [
+      "src/handlers/**/*.js",
+      "src/utils/**/*.js"
+    ],
+    "exclude": [
+      "src/**/*.spec.js",
+      "src/**/_*.js"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "text-summary"
+    ],
+    "cache": true,
+    "all": true,
+    "check-coverage": true,
+    "report-dir": "./coverage"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "expect"
+    ]
+  },
+  "autotypes": {
+    "ignore": [
+      "stripe"
+    ]
+  }
+}
