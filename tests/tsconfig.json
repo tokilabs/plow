@@ -1,15 +1,15 @@
 {
-  "extends": "./config/tsconfig.flexible", // also available: "./config/tsconfig.strict"
+  "extends": "../config/tsconfig.flexible", // also available: "./config/tsconfig.strict"
   "compileOnSave": true,
   "compilerOptions": {
     "target": "ES6",
-    "rootDir": "src",
-    "outDir": "lib",
+    "outDir": "compiled",
+    "rootDir": ".",
     "module": "commonjs",
     "noImplicitAny": true,
-    "removeComments": false,
+    "removeComments": true,
     "preserveConstEnums": true,
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "experimentalDecorators": true,
@@ -22,9 +22,10 @@
     "lib" : [
       "es6",
       "dom"
-    ]
+    ],
+    "baseUrl": "." // required for paths
   },
   "include": [
-    "src/**/*.ts"
+    "**/*.ts"
   ]
 }

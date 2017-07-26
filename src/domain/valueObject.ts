@@ -12,8 +12,17 @@ import { ExtendedObject } from '@cashfarm/lang';
  * @export
  * @class ValueObject
  */
-export class ValueObject extends ExtendedObject {
-  public equals(other: ValueObject): boolean {
+export class ValueObject<TObject> extends ExtendedObject {
+
+  /**
+   * @param ctr Your value object's constructor
+   * @param propNames Name of the properties to pass to constructor IN ORDER
+   */
+  constructor(private ctr: new(...args: any[]) => TObject, private propNames: (keyof TObject)[]) {
+    super();
+  }
+
+  public equals(other: ValueObject<TObject>): boolean {
     return !Object.keys(this).some(prop => {
       // return true if prop is different
       if (typeof this[prop].equals === 'function') {
@@ -22,5 +31,10 @@ export class ValueObject extends ExtendedObject {
 
       return this[prop] !== other[prop];
     });
+  }
+
+  protected newInstanceWith(updatedProps: Partial<TObject>): TObject {
+    return new this.ctr(...this.propNames.map(p =>
+      updatedProps.hasOwnProperty(p) ? updatedProps[p] : (<any>this)[p]));
   }
 }

@@ -27,9 +27,9 @@ export interface IHandleCommand<TCommand extends ICommand> {
  * @class CommandHandler
  */
 export class CommandHandler {
-  handle(cmd: ICommand) {
+  public handle(cmd: ICommand) {
     // Find out the method to apply the function to
     const commandName = cmd.name;
-    this['handle' + commandName](cmd);
+    this[`handle${commandName}`](cmd);
   }
 }

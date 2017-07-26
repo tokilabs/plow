@@ -3,7 +3,7 @@ import { serializeAs, ExtendedObject } from '@cashfarm/lang';
 import { Identity } from './identity';
 
 export interface IEntity<TId> {
-  /*@ts2.0: readonly*/id: TId;
+  readonly id: TId;
 }
 
 /**

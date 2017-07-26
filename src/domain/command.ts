@@ -1,18 +1,14 @@
-/**
- * @module cqrs.command
- */
-import { Message, IMessage } from '../domain/messaging';
+import { Guid } from '@cashfarm/lang';
 
-export interface ICommand extends IMessage {
-  /* @ts2.0: readonly */ name: string;
+export interface ICommand {
+  readonly id: Guid;
+  readonly name: string;
 }
 
-export class Command extends Message {
-  public get name(): string {
-    return this._name;
-  }
+export class Command {
+  public readonly name: string;
 
   constructor(name: string) {
-    super(name);
+    this.name = name;
   }
 }

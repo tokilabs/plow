@@ -6,6 +6,7 @@
   "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
   "tslint.run": "onType",
   "tslint.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
     "lib": true,
     "node_modules": true
