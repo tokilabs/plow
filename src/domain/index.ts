@@ -10,4 +10,5 @@ export * from './iEventStream';
 export * from './iRepository';
 export * from './iSubscribeTo';
 export * from './identity';
+export * from './symbolFunctions';
 export * from './valueObject';
