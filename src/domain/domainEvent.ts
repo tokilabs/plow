@@ -2,18 +2,10 @@
 
 import { Identity, GuidIdentity } from './identity';
 
+import { Symbols } from '../symbols';
+
+// tslint:disable-next-line:no-empty-interface
 export interface IDomainEvent {
-  /**
-   * Id of the event. Can be used for idempotence
-   *
-   * @type {Guid}
-   * @memberof IEvent
-   */
-  readonly id: Guid;
-  readonly name: string;
-  readonly sourceId:  number | string | Guid | Identity<Guid>;
-  readonly sourceVersion: number;
-  readonly metadata: { [key: string]: any };
 }
 
 /**
@@ -24,20 +16,9 @@ export interface IDomainEvent {
  * @class DomainEvent
  * @template TSource Type of object publishing events.
  */
+// tslint:disable-next-line:no-stateless-class
 export abstract class DomainEvent implements IDomainEvent {
-
-  public readonly id: Guid;
-  public readonly name: string;
-
-  public readonly sourceId: number | string | Guid | Identity<Guid>;
-  public readonly sourceVersion: number;
-
-  public readonly metadata: { [key: string]: any };
-
-  constructor(name: string, sourceId: GuidIdentity, sourceVersion: number, metadata?: { [key: string]: any }) {
-    this.name = name;
-    this.sourceId = sourceId;
-    this.sourceVersion = sourceVersion;
-    this.metadata = metadata;
+  constructor(name?: string) {
+    this[Symbols.EventName] = name || this.constructor.name;
   }
 }
