@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/plow",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Library for validating input data and parameters",
   "author": "Saulo Vallory <saulo@cashfarm.com>",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "shiny"
   ],
   "main": "lib/index.js",
-  "typings": "lib/index",
+  "typings": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/cashfarm/plow.git"
