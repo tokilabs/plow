@@ -3,8 +3,11 @@
 import { Identity, GuidIdentity } from './identity';
 
 import { Symbols } from '../symbols';
+import { EventsRegistry } from '../eventSourcing';
 
-// tslint:disable-next-line:no-empty-interface
+/**
+ * @deprecated Use the DomainEvent class instead
+ */// tslint:disable-next-line:no-empty-interface
 export interface IDomainEvent {
 }
 
@@ -17,8 +20,9 @@ export interface IDomainEvent {
  * @template TSource Type of object publishing events.
  */
 // tslint:disable-next-line:no-stateless-class
-export abstract class DomainEvent implements IDomainEvent {
+export abstract class DomainEvent {
   constructor(name?: string) {
     this[Symbols.EventName] = name || this.constructor.name;
+    EventsRegistry.instance.add(this[Symbols.EventName], <any>this.constructor);
   }
 }

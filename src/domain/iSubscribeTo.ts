@@ -1,4 +1,4 @@
-import { IDomainEvent } from './domainEvent';
+import { DomainEvent } from './domainEvent';
 
 /**
  * Implemented by anything that wishes to subscribe to an event emitted by
@@ -7,7 +7,7 @@ import { IDomainEvent } from './domainEvent';
  * @interface IEventHandler
  * @template T
  */
-export interface ISubscribeTo<TEvent extends IDomainEvent> {
+export interface ISubscribeTo<TEvent extends DomainEvent> {
 
   /**
    * Handles the event

@@ -1,23 +1,30 @@
 import { Guid, ConcreteType } from '@cashfarm/lang';
 
-import { AggregateRoot, Identity, IRepositoryOf } from '../domain';
+import { AggregateRoot, DomainEvent, Identity, IRepositoryOf } from '../domain';
 import { IEventStore } from './iEventStore';
+import { AggregateFactory } from './aggregateFactory';
 
 export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<Guid>>
                           implements IRepositoryOf<TAggregate, TId> {
-  protected readonly storage: IEventStore;
 
-  public constructor(storage: IEventStore, private aggtClass: ConcreteType<TAggregate>) {
-    this.storage = storage;
+  public constructor(
+    protected storage: IEventStore,
+    protected aggtClass: ConcreteType<TAggregate>) {
   }
 
-  public save(aggregate: TAggregate, expectedVersion: number): void {
-    this.storage.saveEvents(`${aggregate.constructor.name}-${aggregate.id}`, aggregate.uncommittedChanges, expectedVersion);
+  public save(aggregate: TAggregate): Promise<DomainEvent[]> {
+    return this.storage.save(aggregate)
+      .then(nextVersion => {
+        const events = aggregate.uncommittedChanges;
+        aggregate.markChangesAsCommitted();
+
+        return events;
+      });
   }
 
-  public getById(id: TId): TAggregate {
-    const evts = this.storage.getEventsForAggregate(id);
+  public async getById(id: TId): Promise<TAggregate> {
+    const evts = await this.storage.getEventsByAggregate(this.aggtClass, id);
 
-    return AggregateRoot.load(this.aggtClass, evts);
+    return AggregateFactory.create<TAggregate>(this.aggtClass, evts);
   }
 }

@@ -32,9 +32,12 @@
     "tsc": "node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@cashfarm/lang": "^0.6.3"
+    "@cashfarm/lang": "^0.6.3",
+    "bluebird": "^3.5.0",
+    "uuid": "3.x"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/chalk": "^0.4.31",
     "@types/gulp": "^4.0.4",
@@ -45,6 +48,7 @@
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.13",
     "@types/source-map-support": "^0.4.0",
+    "@types/uuid": "^3.4.0",
     "ava": "^0.21.0",
     "chai": "^3.5.0",
     "chalk": "^1.1.3",
@@ -113,5 +117,8 @@
     "ignore": [
       "stripe"
     ]
+  },
+  "optionalDependencies": {
+    "node-eventstore-client": "^0.1.7"
   }
 }

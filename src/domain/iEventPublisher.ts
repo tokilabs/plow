@@ -1,5 +1,5 @@
-import { IDomainEvent } from './domainEvent';
+import { DomainEvent } from './domainEvent';
 
 export interface IEventPublisher {
-  publish<T extends IDomainEvent>(event: T): void;
+  publish<T extends DomainEvent>(event: T): void;
 }

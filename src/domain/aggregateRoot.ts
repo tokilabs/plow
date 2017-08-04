@@ -2,16 +2,17 @@ import { ConcreteType, hide, IEnumerable } from '@cashfarm/lang';
 
 import { Identity } from './identity';
 import { IEntity, Entity } from './entity';
-import { IDomainEvent } from './domainEvent';
+import { DomainEvent } from './domainEvent';
 import { Symbols } from '../symbols';
 import { Apply } from './symbolFunctions';
+import { EventEnvelope, EventsRegistry } from '../eventSourcing';
 
 export interface IAggregateRoot<TId extends Identity<any>> extends IEntity<TId> {
   readonly id: TId;
   readonly version: number;
-  readonly uncommittedChanges: IDomainEvent[];
+  readonly uncommittedChanges: DomainEvent[];
   markChangesAsCommitted(): void;
-  loadFromHistory(history: IDomainEvent[]): void;
+  loadFromHistory(history: DomainEvent[]): void;
 }
 
 const APPLY_CHANGE = Symbol('APPLY_CHANGE');
@@ -28,14 +29,24 @@ const APPLY_CHANGE = Symbol('APPLY_CHANGE');
  */
 export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TId> implements IAggregateRoot<TId> {
   @hide()
-  protected _version: number;
+  private _version: number = -1;
 
   @hide()
-  private _changes: IDomainEvent[] = [];
+  private _changes: DomainEvent[] = [];
 
-  public static load<T extends AggregateRoot<any>>(constructor: ConcreteType<T>, events: IEnumerable<IDomainEvent>): T {
+  public static load<T extends AggregateRoot<any>>(constructor: ConcreteType<T>, events: IEnumerable<EventEnvelope>): T {
     const t = AggregateRoot.construct(constructor);
-    t.loadFromHistory(events);
+
+    t._version = -1;
+    t._changes = [];
+
+    const mappedEvts = events.map(ee => {
+      const klass = EventsRegistry.get(ee.eventType);
+
+      return klass[Symbols.EventLoader](ee.eventData);
+    });
+
+    t.loadFromHistory(mappedEvts);
 
     return t;
   }
@@ -52,7 +63,7 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
    * @memberOf Order
    */
   private static construct<T extends AggregateRoot<any>>(constructor: ConcreteType<T>): T {
-    return <T> Object.create(constructor.prototype, AggregateRoot.getDescriptor(constructor));
+    return <T> (<any>constructor)._create();
   }
 
   private static getDescriptor<T>(realConstructor: ConcreteType<T>): PropertyDescriptorMap {
@@ -73,33 +84,34 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
     return this._version;
   }
 
-  get uncommittedChanges(): IDomainEvent[]{
+  get uncommittedChanges(): DomainEvent[]{
     return this._changes;
   }
 
   public markChangesAsCommitted() {
+    this._version += this._changes.length;
     this._changes.length = 0;
   }
 
-  public loadFromHistory(history: IDomainEvent[]) {
+  public loadFromHistory(history: DomainEvent[]) {
     history.forEach( event => this[APPLY_CHANGE](event, false));
   }
 
-  protected applyChange(event: IDomainEvent) {
+  protected applyChange(event: DomainEvent) {
     this[APPLY_CHANGE](event, true);
   }
 
-  private [APPLY_CHANGE](event: IDomainEvent, isNew: boolean) {
+  private [APPLY_CHANGE](event: DomainEvent, isNew: boolean) {
     const evtName = event[Symbols.EventName] || Object.getPrototypeOf(event).cosntructor.name;
 
     // Find out the method to apply the function to
-    let applyEvent = this[`apply${evtName}`];
+    let applyEvent: string | symbol = `apply${evtName}`;
 
     if (!applyEvent) {
       const constructor = Object.getPrototypeOf(event) ? Object.getPrototypeOf(event).cosntructor : null;
 
       if (constructor && this[Apply(constructor)] instanceof Function)
-        applyEvent = this[Apply(constructor)](event);
+        applyEvent = Apply(constructor);
     }
 
     if (!applyEvent) {
@@ -110,7 +122,7 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
         The Aggregate ${this.constructor.name} has no apply method for ${evtName}`);
     }
 
-    applyEvent(event);
+    this[applyEvent](event);
 
     if (isNew)
       this._changes.push(event);
