@@ -10,7 +10,6 @@
     "chai": "registry:npm/chai#3.5.0+20160723033700",
     "chalk": "registry:npm/chalk#1.1.1+20160812215109",
     "gulp": "registry:npm/gulp#4.0.0-alpha.2+20160817105618",
-    "node-uuid": "registry:npm/node-uuid#1.4.7+20160723033700",
     "through2": "registry:npm/through2#2.0.0+20160817101636",
     "vinyl": "registry:npm/vinyl#1.2.0+20160817093728"
   }

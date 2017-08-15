@@ -6,6 +6,8 @@ import { Symbols } from '../symbols';
 
 const SINGLETON = Symbol.for('cashfarm.plow.events.registry');
 
+const debug = require('debug')('plow:events:registry');
+
 export class EventsRegistry {
 
   private readonly events: { [key: string]: ConcreteType<DomainEvent> };
@@ -28,6 +30,8 @@ export class EventsRegistry {
   }
 
   public add(eventName: string, eventClass: ConcreteType<DomainEvent>): void {
+    debug(`${eventName} added to the registry`);
+
     if (typeof eventClass[Symbols.EventLoader] !== 'function')
       throw new Error(`Cannot register event ${eventName} class is missing public static function [Symbols.EventLoader](): ${eventName} `);
 

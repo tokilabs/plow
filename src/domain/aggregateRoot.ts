@@ -7,6 +7,8 @@ import { Symbols } from '../symbols';
 import { Apply } from './symbolFunctions';
 import { EventEnvelope, EventsRegistry } from '../eventSourcing';
 
+const debug = require('debug')('plow:aggregate');
+
 export interface IAggregateRoot<TId extends Identity<any>> extends IEntity<TId> {
   readonly id: TId;
   readonly version: number;
@@ -52,7 +54,7 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
   }
 
   /**
-   * Simulate a private constructor to allow instantiating orders without
+   * Simulate a private constructor to allow instantiating without
    * required arguments. This should ONLY be used to create Orders when
    * loading from event stream or inside Order.clone() method.
    *
@@ -63,7 +65,7 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
    * @memberOf Order
    */
   private static construct<T extends AggregateRoot<any>>(constructor: ConcreteType<T>): T {
-    return <T> (<any>constructor)._create();
+    return Object.create(constructor.prototype);
   }
 
   private static getDescriptor<T>(realConstructor: ConcreteType<T>): PropertyDescriptorMap {

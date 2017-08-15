@@ -22,7 +22,7 @@ export interface IDomainEvent {
 // tslint:disable-next-line:no-stateless-class
 export abstract class DomainEvent {
   constructor(name?: string) {
-    this[Symbols.EventName] = name || this.constructor.name;
+    this.constructor[Symbols.EventName] = name || this.constructor.name;
     EventsRegistry.instance.add(this[Symbols.EventName], <any>this.constructor);
   }
 }

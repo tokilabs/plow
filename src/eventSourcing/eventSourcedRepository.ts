@@ -4,6 +4,8 @@ import { AggregateRoot, DomainEvent, Identity, IEventPublisher, IRepositoryOf } 
 import { IEventStore } from './iEventStore';
 import { AggregateFactory } from './aggregateFactory';
 
+const debug = require('debug')('plow:events:repository');
+
 export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<Guid>>
                           implements IRepositoryOf<TAggregate, TId> {
 
@@ -28,7 +30,12 @@ export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<
   }
 
   public async getById(id: TId): Promise<TAggregate> {
+    debug(`Getting aggregate of ${this.aggtClass.name} with id ${id}`);
+
     const evts = await this.storage.getEventsByAggregate(this.aggtClass, id);
+
+    if (evts.length === 0)
+      return null;
 
     return AggregateFactory.create<TAggregate>(this.aggtClass, evts);
   }

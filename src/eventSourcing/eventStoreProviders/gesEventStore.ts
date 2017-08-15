@@ -2,7 +2,7 @@ import * as Bluebird from 'bluebird';
 import * as uuid from 'uuid';
 import * as EventStore from 'node-eventstore-client';
 
-const  debug = require('debug')('plow:event-store:ges');
+const  debug = require('debug')('plow:events:ges');
 
 import { Guid, IEnumerable, Type } from '@cashfarm/lang';
 
@@ -33,6 +33,7 @@ export class GesEventStore implements IEventStore {
     const conn = await this.connect();
 
     debug(`Reading events stream ${streamName}`);
+
     do {
       currentSlice = await conn.readStreamEventsForward(streamName, nextSliceStart, 200);
       nextSliceStart = currentSlice.nextEventNumber;
@@ -78,6 +79,8 @@ export class GesEventStore implements IEventStore {
             },
             evt[Symbols.EventName]));
 
+    debug(`Saving events to stream ${streamName}`);
+
     return Promise.resolve(this.withConn(
       conn =>
         Bluebird.mapSeries<EventStore.EventData, EventStore.WriteResult>(
@@ -121,6 +124,6 @@ export class GesEventStore implements IEventStore {
   }
 
   private getStreamName(type: Type, id: Guid): string {
-    return `${type.name}-${id.toString()}`;
+    return `${type.name}-${id.toString().toUpperCase()}`;
   }
 }

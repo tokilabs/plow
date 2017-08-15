@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/plow",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Library for validating input data and parameters",
   "author": "Saulo Vallory <saulo@cashfarm.com>",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "tsc": "node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@cashfarm/lang": "^0.6.3",
+    "@cashfarm/lang": "^0.6.4",
     "bluebird": "^3.5.0",
     "uuid": "3.x"
   },
