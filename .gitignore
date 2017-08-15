@@ -3,3 +3,4 @@ lib/
 typings/
 *.log
 *.tgz
+/tests/compiled
