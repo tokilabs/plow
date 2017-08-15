@@ -1,5 +1,7 @@
 import { Guid } from '@cashfarm/lang';
 
+// tslint:disable:max-classes-per-file
+
 export class InvalidIdentityValueException extends Error {
   constructor (value: string, identityTypeName: string) {
     super(`The value '${value}' isn't valid for creating an identity of type ${identityTypeName}`);
@@ -40,9 +42,6 @@ export abstract class Identity<TId> implements IIdentity<TId> {
 
 export class GuidIdentity extends Identity<Guid> {
 
-  constructor();
-  constructor(guid: string);
-  constructor(guid: Guid);
   constructor(guid?: string | Guid) {
     super();
 
@@ -68,7 +67,6 @@ export class GuidIdentity extends Identity<Guid> {
     return this.toString();
   }
 }
-
 export class IntIdentity extends Identity<number> {
   constructor(value: number) {
     super(value);
