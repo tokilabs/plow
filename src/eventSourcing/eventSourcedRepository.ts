@@ -16,11 +16,12 @@ export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<
   public save(aggregate: TAggregate): Promise<DomainEvent[]> {
     return this.storage.save(aggregate)
       .then(nextVersion => {
-        const events = aggregate.uncommittedChanges;
-        aggregate.markChangesAsCommitted();
+        const events = aggregate.uncommittedChanges.slice();
 
         if (this.eventPublisher)
             events.map(e => this.eventPublisher.publish(e));
+
+        aggregate.markChangesAsCommitted();
 
         return events;
       });
