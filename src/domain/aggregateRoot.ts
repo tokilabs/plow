@@ -45,7 +45,14 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
     const mappedEvts = events.map(ee => {
       const klass = EventsRegistry.get(ee.eventType);
 
-      return klass[Symbols.EventLoader](ee.eventData);
+      const e = klass[Symbols.EventLoader](ee.eventData);
+
+      if (e.constructor !== klass) {
+        throw new Error(`${klass.name}[EventLoader]() method did not return an instance of ${klass.name}.
+          It returned a ${e.constructor ? e.constructor.name : typeof e} instead`);
+      }
+
+      return e;
     });
 
     t.loadFromHistory(mappedEvts);

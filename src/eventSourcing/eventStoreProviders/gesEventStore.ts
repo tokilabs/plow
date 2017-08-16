@@ -42,6 +42,7 @@ export class GesEventStore implements IEventStore {
     } while (!currentSlice.isEndOfStream);
 
     conn.close();
+    debug(`Got the ${events.length} events`);
 
     return events;
   }
