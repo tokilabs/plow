@@ -30,6 +30,12 @@ export class EventsRegistry {
   }
 
   public add(eventName: string, eventClass: ConcreteType<DomainEvent>): void {
+    if (!eventName) {
+      const e = new Error('eventName is required for registering events');
+      console.error(e.stack);
+      throw e;
+    }
+
     debug(`${eventName} added to the registry`);
 
     if (typeof eventClass[Symbols.EventLoader] !== 'function')

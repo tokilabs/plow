@@ -14,7 +14,7 @@ export interface IAggregateRoot<TId extends Identity<any>> extends IEntity<TId> 
   readonly version: number;
   readonly uncommittedChanges: DomainEvent[];
   markChangesAsCommitted(): void;
-  loadFromHistory(history: DomainEvent[]): void;
+  // loadFromHistory(history: DomainEvent[]): void;
 }
 
 const APPLY_CHANGE = Symbol('APPLY_CHANGE');
@@ -95,16 +95,16 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
     this._changes.length = 0;
   }
 
-  public loadFromHistory(history: DomainEvent[]) {
-    history.forEach( event => this[APPLY_CHANGE](event, false));
-  }
-
   protected applyChange(event: DomainEvent) {
     this[APPLY_CHANGE](event, true);
   }
 
+  private loadFromHistory(history: DomainEvent[]) {
+    history.forEach( event => this[APPLY_CHANGE](event, false));
+  }
+
   private [APPLY_CHANGE](event: DomainEvent, isNew: boolean) {
-    const evtName = event[Symbols.EventName] || Object.getPrototypeOf(event).constructor.name;
+    const evtName = event[Symbols.EventName] || event.constructor[Symbols.EventName] || event.constructor.name;
 
     // Find out the method to apply the function to
     let applyEvent: string | symbol = `apply${evtName}`;

@@ -23,6 +23,6 @@ export interface IDomainEvent {
 export abstract class DomainEvent {
   constructor(name?: string) {
     this.constructor[Symbols.EventName] = name || this.constructor.name;
-    EventsRegistry.instance.add(this[Symbols.EventName], <any>this.constructor);
+    EventsRegistry.instance.add(this.constructor[Symbols.EventName], <any>this.constructor);
   }
 }
