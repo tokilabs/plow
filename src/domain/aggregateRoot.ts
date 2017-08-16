@@ -100,6 +100,7 @@ export abstract class AggregateRoot<TId extends Identity<any>> extends Entity<TI
   }
 
   private loadFromHistory(history: DomainEvent[]) {
+    this._version = history.length - 1;
     history.forEach( event => this[APPLY_CHANGE](event, false));
   }
 
