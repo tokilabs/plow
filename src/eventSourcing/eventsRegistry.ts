@@ -36,12 +36,11 @@ export class EventsRegistry {
       throw e;
     }
 
-    debug(`${eventName} added to the registry`);
-
     if (typeof eventClass[Symbols.EventLoader] !== 'function')
       throw new Error(`Cannot register event ${eventName} class is missing public static function [Symbols.EventLoader](): ${eventName} `);
 
     this.events[eventName] = eventClass;
+    debug(`${eventName} added to the registry`);
   }
 
   public get(eventName: string): ConcreteType<DomainEvent> {
