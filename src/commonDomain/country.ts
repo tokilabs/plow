@@ -287,7 +287,7 @@ export class Country extends ValueObject<Country> {
    * @memberof Country
    */
   public static find(name: string): Country {
-    if (!isBlank(name))
+    if (isBlank(name))
       throw new Error('Parameter `name` cannot be empty');
 
     return Country.asArray().find(c => c instanceof Country && c.name === name);
@@ -302,13 +302,5 @@ export class Country extends ValueObject<Country> {
    */
   public static asArray(): Country[] {
     return Object.getOwnPropertyNames(Country).map(p => Country[p]);
-  }
-
-  public setName(name: string) {
-    return this.newInstanceWith({ name });
-  }
-
-  public setCode(code: string) {
-    return this.newInstanceWith({ code });
   }
 }
