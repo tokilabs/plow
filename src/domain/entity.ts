@@ -1,7 +1,8 @@
-import { serializeAs, ExtendedObject } from '@cashfarm/lang';
+import { serializeAs, ExtendedObject, Guid } from '@cashfarm/lang';
 
 import { Identity } from './identity';
 
+export const IEntity = Symbol('IEntity');
 export interface IEntity<TId> {
   readonly id: TId;
 }
@@ -15,7 +16,7 @@ export interface IEntity<TId> {
  * @extends {IEntity<TId>}
  * @template TId The type of this entities identity.
  */
-export abstract class Entity<TId extends Identity<any>> extends ExtendedObject implements IEntity<TId> {
+export abstract class Entity<TId extends Identity<any> | Guid> extends ExtendedObject implements IEntity<TId> {
 
   @serializeAs('id')
   protected _id: TId;

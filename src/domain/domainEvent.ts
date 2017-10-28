@@ -1,4 +1,4 @@
-﻿import { Guid } from '@cashfarm/lang';
+﻿import { Guid, ConcreteType } from '@cashfarm/lang';
 
 import { Identity, GuidIdentity } from './identity';
 
@@ -7,21 +7,30 @@ import { EventsRegistry } from '../eventSourcing';
 
 /**
  * @deprecated Use the DomainEvent class instead
- */// tslint:disable-next-line:no-empty-interface
-export interface IDomainEvent {
-}
+ */
+export const IDomainEvent = Symbol('IDomainEvent');
+// tslint:disable-next-line:no-empty-interface
+export interface IDomainEvent {}
 
 /**
- * Base class for all domain events.
- *
- * @export
- * @abstract
- * @class DomainEvent
- * @template TSource Type of object publishing events.
+ * Decorates the class as a Domain Event setting a name different than the class name
+ * @param name The name of the event
  */
-// tslint:disable-next-line:no-stateless-class
-export abstract class DomainEvent {
-  constructor(name?: string) {
-    this.constructor[Symbols.EventName] = name || this.constructor.name;
+export function DomainEvent(name?: string): (target: ConcreteType<IDomainEvent>) => void;
+/**
+ * Do not use this. Either use `@DomainEvent` or `@DomainEvent("customName")`
+ * @private
+ */
+export function DomainEvent(target: ConcreteType<IDomainEvent>): void;
+export function DomainEvent(nameOrTarget?: string | ConcreteType<IDomainEvent>) {
+  if (typeof nameOrTarget !== 'string') {
+    nameOrTarget[Symbols.EventName] = nameOrTarget.name;
+    EventsRegistry.add(nameOrTarget.name, nameOrTarget);
+  }
+  else {
+    return (target: ConcreteType<IDomainEvent>) => {
+      target[Symbols.EventName] = name || target.name;
+      EventsRegistry.add(name || target.name, target);
+    };
   }
 }

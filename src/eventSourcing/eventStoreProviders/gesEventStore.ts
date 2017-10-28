@@ -4,13 +4,14 @@ import * as EventStore from 'node-eventstore-client';
 
 const  debug = require('debug')('plow:events:ges');
 
-import { Guid, IEnumerable, Type } from '@cashfarm/lang';
+import { Guid, Type, requireByFQN } from '@cashfarm/lang';
 
 import { AggregateRoot, Identity, DomainEvent } from '../../domain';
 import { AggregateFactory } from '../aggregateFactory';
 import { EventEnvelope } from '../eventEnvelope';
 import { IEventStore } from '../iEventStore';
 import { Symbols } from '../../symbols';
+import { classToPlain, deserialize } from 'class-transformer';
 
 export class GesEventStore implements IEventStore {
   constructor(
@@ -24,7 +25,7 @@ export class GesEventStore implements IEventStore {
       .then(results => results.reduce<number>((r, c) => c.nextExpectedVersion, 0));
   }
 
-  public async getEventsByAggregate(aggregateType: Type, aggregateId: Identity<Guid>): Promise<IEnumerable<EventEnvelope>> {
+  public async getEventsByAggregate(aggregateType: Type, aggregateId: Identity<Guid>): Promise<EventEnvelope[]> {
     const events: EventEnvelope[] = [];
     let currentSlice: EventStore.StreamEventsSlice;
     let nextSliceStart = 0;
@@ -51,17 +52,18 @@ export class GesEventStore implements IEventStore {
     const e = event.event;
 
     const metadata = JSON.parse(e.metadata.toString());
+    const eventClass = requireByFQN(e.eventType);
 
-    return new EventEnvelope({
-      id: new Guid(e.eventId),
-      created: new Date(e.createdEpoch),
-      eventData: JSON.parse(e.data.toString()),
-      eventType: e.eventType,
+    return new EventEnvelope(
+      new Guid(e.eventId),
+      metadata.aggregateType, // aggregateType
+      metadata.aggregateId, // aggregateId
+      e.eventNumber, // version
+      deserialize(eventClass, e.data.toString()), // eventData
+      e.eventType, // eventType
       metadata,
-      aggregateId: metadata.aggregateId,
-      aggregateType: metadata.aggregateType,
-      version: e.eventNumber
-    });
+      new Date(e.createdEpoch) // created
+    );
   }
 
   private saveEvents(aggtType: Type, aggtId: Guid, events: DomainEvent[], expectedVersion: number): Promise<EventStore.WriteResult[]> {
@@ -80,7 +82,7 @@ export class GesEventStore implements IEventStore {
             },
             evt[Symbols.EventName]));
 
-    debug(`Saving events to stream ${streamName}`);
+    debug(`Saving eve nts to stream ${streamName}`);
 
     return Promise.resolve(this.withConn(
       conn =>

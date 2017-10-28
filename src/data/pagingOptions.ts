@@ -5,21 +5,6 @@
  */
 export class PagingOptions {
 
-  private _pageSize: number;
-
-  /**
-   * Gets or sets the size of the page.
-   * @type {number}
-   */
-  public get pageSize(): number {
-    return this._pageSize;
-  }
-
-  public set pageSize(size: number) {
-    if ( size < 1) throw new Error('pageSize must be greater than 0');
-    this._pageSize = size;
-  }
-
   /**
    * Gets or sets the page.
    * @type {number}
@@ -40,6 +25,21 @@ export class PagingOptions {
   public get pageCount(): number {
     return Math.ceil(this.total / this.pageSize);
   }
+
+  /**
+   * Gets or sets the size of the page.
+   * @type {number}
+   */
+  public get pageSize(): number {
+    return this._pageSize;
+  }
+
+  public set pageSize(size: number) {
+    if ( size < 1) throw new Error('pageSize must be greater than 0');
+    this._pageSize = size;
+  }
+
+  private _pageSize: number;
 
   constructor(total: number, pageSize: number, currPage: number) {
     this.total = total;

@@ -1,5 +1,3 @@
-import { ExtendedObject } from '@cashfarm/lang';
-
 /**
  * Base class for ValueObject's
  *
@@ -12,14 +10,15 @@ import { ExtendedObject } from '@cashfarm/lang';
  * @export
  * @class ValueObject
  */
-export class ValueObject<TObject> extends ExtendedObject {
+export class ValueObject<TObject> {
 
   /**
-   * @param ctr Your value object's constructor
-   * @param propNames Name of the properties to pass to constructor IN ORDER
+   * @param construct Your value object's constructor
+   * @param constructParams Name of the properties to pass to constructor IN ORDER
    */
-  constructor(private ctr: new(...args: any[]) => TObject, private propNames: (keyof TObject)[]) {
-    super();
+  constructor(private construct: new(...args: any[]) => TObject, constructParams: (keyof TObject)[]) {
+    this[Symbol('Constructor')] = construct;
+    this[Symbol('ConstructorParams')] = constructParams;
   }
 
   public equals(other: ValueObject<TObject>): boolean {
@@ -34,7 +33,9 @@ export class ValueObject<TObject> extends ExtendedObject {
   }
 
   protected newInstanceWith(updatedProps: Partial<TObject>): TObject {
-    return new this.ctr(...this.propNames.map(p =>
-      updatedProps.hasOwnProperty(p) ? updatedProps[p] : (<any>this)[p]));
+    return new this[Symbol('Constructor')](
+        ...(<any[]>this[Symbol('ConstructorParams')])
+        .map(p =>
+          updatedProps.hasOwnProperty(p) ? updatedProps[p] : (<any>this)[p]));
   }
 }

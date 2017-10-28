@@ -3,6 +3,8 @@ import { isBlank } from '@cashfarm/lang';
 import { ValueObject } from '../domain';
 
 export class Language extends ValueObject<Language> {
+
+  // #region Languages list
   public static readonly aa = new Language('Afar', 'aa');
   public static readonly ab = new Language('Abkhazian', 'ab');
   public static readonly af = new Language('Afrikaans', 'af');
@@ -182,6 +184,7 @@ export class Language extends ValueObject<Language> {
   public static readonly za = new Language('Zhuang', 'za');
   public static readonly zh = new Language('Chinese', 'zh');
   public static readonly zu = new Language('Zulu', 'zu');
+  // #endregion
 
   constructor(
     public readonly name: string,

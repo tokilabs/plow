@@ -6,7 +6,7 @@ import { AggregateFactory } from './aggregateFactory';
 
 const debug = require('debug')('plow:events:repository');
 
-export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<Guid>>
+export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<Guid> | Guid>
                           implements IRepositoryOf<TAggregate, TId> {
 
   public constructor(

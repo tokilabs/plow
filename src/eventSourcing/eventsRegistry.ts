@@ -1,4 +1,4 @@
-import { ConcreteType } from '@cashfarm/lang';
+import { ConcreteType, Type } from '@cashfarm/lang';
 
 import { DomainEvent } from '../domain';
 
@@ -7,6 +7,13 @@ import { Symbols } from '../symbols';
 const SINGLETON = Symbol.for('cashfarm.plow.events.registry');
 
 const debug = require('debug')('plow:events:registry');
+
+export function Event(name?: string) {
+  return (target: ConcreteType<DomainEvent>) => {
+    target[Symbols.EventName] = name || target.name;
+    EventsRegistry.add(name || target.name, target);
+  };
+}
 
 export class EventsRegistry {
 
@@ -38,6 +45,9 @@ export class EventsRegistry {
 
     if (typeof eventClass[Symbols.EventLoader] !== 'function')
       throw new Error(`Cannot register event ${eventName} class is missing public static function [Symbols.EventLoader](): ${eventName} `);
+
+    if (this.events[eventName] !== undefined)
+      throw new Error(`Event ${eventName} was already added to the registry`);
 
     this.events[eventName] = eventClass;
     debug(`${eventName} added to the registry`);

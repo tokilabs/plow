@@ -2,7 +2,7 @@
   "extends": "./config/tsconfig.flexible", // also available: "./config/tsconfig.strict"
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es6",
     "rootDir": "src",
     "outDir": "lib",
     "module": "commonjs",
