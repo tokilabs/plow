@@ -15,7 +15,7 @@ Here's is a simple event implementation that represents the fact that a task was
 
 ```
 import { Guid } from '@cashfarm/lang';
-import { DomainEvent } from '@cashfarm/plow';
+import { IDomainEvent } from '@cashfarm/plow';
 
 @DomainEvent
 class TaskCompleted {
@@ -34,7 +34,7 @@ events. Here's a simple example of what an AR should look like:
 
 ```
 import { Guid, isEmpty } from '@cashfarm/lang';
-import { AggregateRoot, Apply, DomainEvent, Event } from '@cashfarm/plow';
+import { AggregateRoot, Apply, IDomainEvent, Event } from '@cashfarm/plow';
 
 import { TaskCompleted } from '../events';
 

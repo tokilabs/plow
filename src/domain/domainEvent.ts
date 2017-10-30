@@ -6,7 +6,7 @@ import { Symbols } from '../symbols';
 import { EventsRegistry } from '../eventSourcing';
 
 /**
- * @deprecated Use the DomainEvent class instead
+ * @deprecated Use the IDomainEvent class instead
  */
 export const IDomainEvent = Symbol('IDomainEvent');
 // tslint:disable-next-line:no-empty-interface

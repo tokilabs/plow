@@ -4,7 +4,7 @@ import { ConcreteType, requireByFQN, Guid } from '@cashfarm/lang';
 
 import { Identity } from './identity';
 import { IEntity, Entity } from './entity';
-import { DomainEvent } from './domainEvent';
+import { IDomainEvent } from './domainEvent';
 import { Symbols } from '../symbols';
 import { Apply } from './symbolFunctions';
 import { EventEnvelope, EventsRegistry } from '../eventSourcing';
@@ -17,7 +17,7 @@ const APPLY_CHANGE = Symbol('APPLY_CHANGE');
 export interface IAggregateRoot<TId extends Identity<any> | Guid> extends IEntity<TId> {
   readonly id: TId;
   readonly version: number;
-  readonly uncommittedChanges: DomainEvent[];
+  readonly uncommittedChanges: IDomainEvent[];
   markChangesAsCommitted(): void;
 }
 
@@ -36,7 +36,7 @@ export abstract class AggregateRoot<TId extends Identity<any> | Guid> extends En
   private _version: number = -1;
 
   @Exclude()
-  private _changes: DomainEvent[] = [];
+  private _changes: IDomainEvent[] = [];
 
   public static load<T extends AggregateRoot<any>>(constructor: ConcreteType<T>, events: EventEnvelope[]): T {
     const t = AggregateRoot.construct(constructor);
@@ -47,7 +47,7 @@ export abstract class AggregateRoot<TId extends Identity<any> | Guid> extends En
     const mappedEvts = events.map(ee => {
       const klass = requireByFQN(ee.eventType);
 
-      const e = plainToClass(klass, ee.data);
+      const e = plainToClass(klass, ee.event);
 
       if (e.constructor !== klass) {
         throw new Error(`${klass.name}[EventLoader]() method did not return an instance of ${klass.name}.
@@ -95,7 +95,7 @@ export abstract class AggregateRoot<TId extends Identity<any> | Guid> extends En
     return this._version;
   }
 
-  get uncommittedChanges(): DomainEvent[]{
+  get uncommittedChanges(): IDomainEvent[]{
     return this._changes;
   }
 
@@ -104,16 +104,16 @@ export abstract class AggregateRoot<TId extends Identity<any> | Guid> extends En
     this._changes.length = 0;
   }
 
-  protected applyChange(event: DomainEvent) {
+  protected applyChange(event: IDomainEvent) {
     this[APPLY_CHANGE](event, true);
   }
 
-  private loadFromHistory(history: DomainEvent[]) {
+  private loadFromHistory(history: IDomainEvent[]) {
     this._version = history.length - 1;
     history.forEach( event => this[APPLY_CHANGE](event, false));
   }
 
-  private [APPLY_CHANGE](event: DomainEvent, isNew: boolean) {
+  private [APPLY_CHANGE](event: IDomainEvent, isNew: boolean) {
     const evtName = event[Symbols.EventName] || event.constructor[Symbols.EventName] || event.constructor.name;
 
     // Find out the method to apply the function to

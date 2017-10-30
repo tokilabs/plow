@@ -1,6 +1,6 @@
 import { Guid, Type } from '@cashfarm/lang';
 
-import { AggregateRoot, DomainEvent } from '../domain';
+import { AggregateRoot, IDomainEvent } from '../domain';
 import { Identity } from '../domain/identity';
 import { EventEnvelope } from './eventEnvelope';
 

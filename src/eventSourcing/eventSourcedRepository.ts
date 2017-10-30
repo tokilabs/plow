@@ -1,6 +1,6 @@
 import { Guid, ConcreteType } from '@cashfarm/lang';
 
-import { AggregateRoot, DomainEvent, Identity, IEventPublisher, IRepositoryOf } from '../domain';
+import { AggregateRoot, IDomainEvent, Identity, IEventPublisher, IRepositoryOf } from '../domain';
 import { IEventStore } from './iEventStore';
 import { AggregateFactory } from './aggregateFactory';
 
@@ -15,7 +15,7 @@ export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<
     protected eventPublisher?: IEventPublisher) {
   }
 
-  public save(aggregate: TAggregate): Promise<DomainEvent[]> {
+  public save(aggregate: TAggregate): Promise<IDomainEvent[]> {
     return this.storage.save(aggregate)
       .then(nextVersion => {
         const events = aggregate.uncommittedChanges.slice();

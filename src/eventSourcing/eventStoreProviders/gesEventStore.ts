@@ -6,7 +6,7 @@ const  debug = require('debug')('plow:events:ges');
 
 import { Guid, Type, requireByFQN } from '@cashfarm/lang';
 
-import { AggregateRoot, Identity, DomainEvent } from '../../domain';
+import { AggregateRoot, Identity, IDomainEvent } from '../../domain';
 import { AggregateFactory } from '../aggregateFactory';
 import { EventEnvelope } from '../eventEnvelope';
 import { IEventStore } from '../iEventStore';
@@ -66,7 +66,7 @@ export class GesEventStore implements IEventStore {
     );
   }
 
-  private saveEvents(aggtType: Type, aggtId: Guid, events: DomainEvent[], expectedVersion: number): Promise<EventStore.WriteResult[]> {
+  private saveEvents(aggtType: Type, aggtId: Guid, events: IDomainEvent[], expectedVersion: number): Promise<EventStore.WriteResult[]> {
     if (!events || events.length === 0)
       throw new Error('Parameter events cannot be null or empty');
 

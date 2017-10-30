@@ -1,7 +1,7 @@
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 
-import { DomainEvent, IAggregateRoot } from './domain';
+import { IDomainEvent, IAggregateRoot } from './domain';
 
 /**
  * Plow framework configuration options
@@ -12,17 +12,17 @@ import { DomainEvent, IAggregateRoot } from './domain';
 export interface IPlowConfig {
   requireApplyForEachEvent: boolean;
 
-  defaultApplyFn(aggt: IAggregateRoot<any>, event: DomainEvent): void;
+  defaultApplyFn(aggt: IAggregateRoot<any>, event: IDomainEvent): void;
 }
 
-export function CopyPropsToUnderscoreProp(aggt: IAggregateRoot<any>, event: DomainEvent): void {
+export function CopyPropsToUnderscoreProp(aggt: IAggregateRoot<any>, event: IDomainEvent): void {
   Reflect.ownKeys(event).forEach(k => {
     if ('_id' === `_${k}`) return;
     aggt[`_${k}`] = event[k];
   });
 }
 
-export function CopyProps(aggt: IAggregateRoot<any>, event: DomainEvent): void {
+export function CopyProps(aggt: IAggregateRoot<any>, event: IDomainEvent): void {
   Reflect.ownKeys(event).forEach(k => {
     if ('id' === k) return;
     aggt[k] = event[k];

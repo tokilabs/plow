@@ -1,6 +1,6 @@
 import { Type } from '@cashfarm/lang';
 
-import { DomainEvent } from './domainEvent';
+import { IDomainEvent } from './domainEvent';
 
 /**
  * Returns a symbol used to created methods that apply events to agrregates
@@ -9,7 +9,7 @@ import { DomainEvent } from './domainEvent';
  * @param {(DomainEvent & Type)} e
  * @returns {symbol}
  */
-export function Apply(e: DomainEvent & Type): symbol {
+export function Apply(e: IDomainEvent & Type): symbol {
   return Symbol.for(e.prototype.constructor.name);
 }
 
@@ -20,6 +20,6 @@ export function Apply(e: DomainEvent & Type): symbol {
  * @param {(DomainEvent & Type)} e
  * @returns {symbol}
  */
-export function Handle(e: DomainEvent & Type): symbol {
+export function Handle(e: IDomainEvent & Type): symbol {
   return Symbol.for(e.prototype.constructor.name);
 }

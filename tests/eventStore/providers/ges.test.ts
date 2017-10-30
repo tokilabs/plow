@@ -1,17 +1,17 @@
 import test from 'ava';
 import * as EventStore from 'node-eventstore-client';
 
-import { AggregateRoot, DomainEvent, GesEventStore, GuidIdentity } from '@cashfarm/plow';
+import { AggregateRoot, IDomainEvent, GesEventStore, GuidIdentity } from '@cashfarm/plow';
 
 const Debug = require('debug')('test');
 
-class DumbEvent extends DomainEvent {
+class DumbEvent extends IDomainEvent {
   constructor(public randomVal: any) {
     super();
   }
 }
 
-const events: DomainEvent[] = [
+const events: IDomainEvent[] = [
   new DumbEvent(1),
   new DumbEvent(2),
   new DumbEvent(3),

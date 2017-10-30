@@ -1,6 +1,6 @@
 import { ConcreteType, Type } from '@cashfarm/lang';
 
-import { DomainEvent } from '../domain';
+import { IDomainEvent } from '../domain';
 
 import { Symbols } from '../symbols';
 
@@ -9,7 +9,7 @@ const SINGLETON = Symbol.for('cashfarm.plow.events.registry');
 const debug = require('debug')('plow:events:registry');
 
 export function Event(name?: string) {
-  return (target: ConcreteType<DomainEvent>) => {
+  return (target: ConcreteType<IDomainEvent>) => {
     target[Symbols.EventName] = name || target.name;
     EventsRegistry.add(name || target.name, target);
   };
@@ -17,7 +17,7 @@ export function Event(name?: string) {
 
 export class EventsRegistry {
 
-  private readonly events: { [key: string]: ConcreteType<DomainEvent> };
+  private readonly events: { [key: string]: ConcreteType<IDomainEvent> };
 
   public static get instance(): EventsRegistry {
     return global[SINGLETON] || (global[SINGLETON] = new EventsRegistry());
@@ -28,15 +28,15 @@ export class EventsRegistry {
     Object.freeze(this);
   }
 
-  public static add(eventName: string, eventClass: ConcreteType<DomainEvent>): void {
+  public static add(eventName: string, eventClass: ConcreteType<IDomainEvent>): void {
     return EventsRegistry.instance.add(eventName, eventClass);
   }
 
-  public static get(eventName: string): ConcreteType<DomainEvent> {
+  public static get(eventName: string): ConcreteType<IDomainEvent> {
     return EventsRegistry.instance.get(eventName);
   }
 
-  public add(eventName: string, eventClass: ConcreteType<DomainEvent>): void {
+  public add(eventName: string, eventClass: ConcreteType<IDomainEvent>): void {
     if (!eventName) {
       const e = new Error('eventName is required for registering events');
       console.error(e.stack);
@@ -53,7 +53,7 @@ export class EventsRegistry {
     debug(`${eventName} added to the registry`);
   }
 
-  public get(eventName: string): ConcreteType<DomainEvent> {
+  public get(eventName: string): ConcreteType<IDomainEvent> {
     return this.events[eventName];
   }
 }
