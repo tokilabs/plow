@@ -38,9 +38,9 @@
     imurmurhash "^0.1.4"
     slide "^1.1.5"
 
-"@cashfarm/lang@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.npmjs.org/@cashfarm/lang/-/lang-0.7.1.tgz#a7d3e6a64a5572689810370a9d021c1d282147ee"
+"@cashfarm/lang@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.npmjs.org/@cashfarm/lang/-/lang-0.8.0.tgz#85b3d48813d8c97364cb570f18cd6e1184daaf94"
   dependencies:
     class-transformer "^0.1.8"
     reflect-metadata "^0.1.10"

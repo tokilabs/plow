@@ -32,7 +32,7 @@
     "tsc": "node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@cashfarm/lang": "^0.7.1",
+    "@cashfarm/lang": "^0.8.0",
     "amqplib": "^0.5.1",
     "bluebird": "^3.5.0",
     "class-transformer": "^0.1.8",
