@@ -1,3 +1,5 @@
+import { injectable, unmanaged } from 'inversify';
+
 import { Guid, ConcreteType } from '@cashfarm/lang';
 
 import { AggregateRoot, IDomainEvent, Identity, IEventPublisher, IRepositoryOf } from '../domain';
@@ -6,13 +8,14 @@ import { AggregateFactory } from './aggregateFactory';
 
 const debug = require('debug')('plow:events:repository');
 
+@injectable()
 export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<Guid> | Guid>
                           implements IRepositoryOf<TAggregate, TId> {
 
   public constructor(
-    protected storage: IEventStore,
-    protected aggtClass: ConcreteType<TAggregate>,
-    protected eventPublisher?: IEventPublisher) {
+    @unmanaged() protected storage: IEventStore,
+    @unmanaged() protected aggtClass: ConcreteType<TAggregate>,
+    @unmanaged() protected eventPublisher?: IEventPublisher) {
   }
 
   public save(aggregate: TAggregate): Promise<IDomainEvent[]> {

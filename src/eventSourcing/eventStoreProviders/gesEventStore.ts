@@ -1,6 +1,7 @@
 import * as Bluebird from 'bluebird';
 import * as uuid from 'uuid';
 import * as EventStore from 'node-eventstore-client';
+import { injectable, unmanaged } from 'inversify';
 
 const  debug = require('debug')('plow:events:ges');
 
@@ -13,11 +14,12 @@ import { IEventStore } from '../iEventStore';
 import { Symbols } from '../../symbols';
 import { classToPlain, deserialize } from 'class-transformer';
 
+@injectable()
 export class GesEventStore implements IEventStore {
   constructor(
-    private host: string = 'localhost',
-    private port: number = 1113,
-    private settings: EventStore.ConnectionSettings = {}) {
+    @unmanaged() private host: string = 'localhost',
+    @unmanaged() private port: number = 1113,
+    @unmanaged() private settings: EventStore.ConnectionSettings = {}) {
   }
 
   public save<T extends AggregateRoot<Identity<Guid>>>(aggregate: T): Promise<number> {
