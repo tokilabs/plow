@@ -1,14 +1,10 @@
-const bus = require('servicebus').bus();
-
 import { Type } from '@cashfarm/lang';
 import { Handle, IEventPublisher, ISubscribeTo, IDomainEvent } from '../domain';
 import { Symbols } from '../symbols';
 
 const debug = require('debug')('plow:events');
 
-bus.use(bus.package());
-bus.use(bus.correlate());
-bus.use(bus.logger());
+import { IMessageTransport } from './transports/iMessageTransport';
 
 export const IEventBus = Symbol('IEventBus');
 export interface IEventBus {
@@ -16,7 +12,7 @@ export interface IEventBus {
 }
 
 export class EventBus implements IEventBus, IEventPublisher {
-  constructor(private serviceName: string) {
+  constructor(private serviceName: string, private transport: IMessageTransport) {
     // subscribe this instance to ALL events
     // this way the local microservice can choose
     // to listen to any event
@@ -27,7 +23,7 @@ export class EventBus implements IEventBus, IEventPublisher {
     debug(`Registering handler for ${topic}:`, handler.constructor ?
     handler.constructor.name : handler.toString());
 
-    bus.subscribe(topic, (message: any) => handler(message.type, message.data));
+    this.transport.subscribe(topic, (message: any) => handler(message.type, message.data));
   }
 
   public register<T extends IDomainEvent & Type>(evtClass: T, handler: any) {
@@ -35,7 +31,7 @@ export class EventBus implements IEventBus, IEventPublisher {
     debug(`Registering handler for ${evtName}:`, handler.constructor ?
         handler.constructor.name : handler.toString());
 
-    bus.subscribe(
+    this.transport.subscribe(
       `${this.serviceName}.${evtName}`,
       (name: string, event: IDomainEvent) => handler[Handle(evtClass)].apply(handler, [event]));
   }
@@ -44,7 +40,7 @@ export class EventBus implements IEventBus, IEventPublisher {
     const evtName = this.getEventName(evt);
     debug(`Publishing event ${evtName}`);
 
-    bus.publish(`${this.serviceName}.${evtName}`, evt);
+    this.transport.publish(`${this.serviceName}.${evtName}`, evt);
   }
 
   private getEventName(evt: IDomainEvent) {

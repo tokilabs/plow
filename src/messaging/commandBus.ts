@@ -4,25 +4,24 @@ import { Type } from '@cashfarm/lang';
 import { ICommandSender, ICommand, IHandleCommand } from '../domain';
 import { Symbols } from '../symbols';
 
+import { IMessageTransport } from './transports/iMessageTransport';
+
 const debug = require('debug')('plow:commands');
 
-bus.use(bus.package());
-bus.use(bus.correlate());
-bus.use(bus.logger());
-
-export const ICommandBus = Symbol('ICommandBus');
+export const ICommandBus = Symbol('@cashfarm/plow.ICommandBus');
 export interface ICommandBus {
   register<T extends ICommand>(cmdName: string, handler: IHandleCommand<T>): void;
 }
 
 export class CommandBus implements ICommandBus, ICommandSender {
+
+  constructor(private transport: IMessageTransport) {}
+
   public register<T extends ICommand>(cmdName: string, handler: IHandleCommand<T>) {
-    bus.listen(cmdName, handler.handle.bind(handler));
+    this.transport.listen(cmdName, handler.handle.bind(handler));
   }
 
   public send(cmd: ICommand) {
-    bus.send(cmd.name, cmd);
+    this.transport.send(cmd.name, cmd);
   }
 }
-
-export default new CommandBus();
