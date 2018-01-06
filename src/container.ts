@@ -1,12 +1,12 @@
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 import { Container, decorate, injectable, unmanaged } from 'inversify';
-import { IProvide, IFluentProvide, makeProvideDecorator, makeFluentProvideDecorator } from './container/decorators';
+import { makeProvideDecorator, makeFluentProvideDecorator } from 'inversify-binding-decorators';
 
 // Import classes here so they can register themselves
 // tslint:disable:no-import-side-effect
 
-const debug = require('debug')('microservice:ioc');
+const debug = require('debug')('plow:ioc');
 
 const _container = new Container();
 
@@ -15,13 +15,13 @@ const _container = new Container();
 //
 const realProvide = makeProvideDecorator(_container);
 
-const _provide: IProvide = (target: any, callback: any) => {
+const _provide = (target: any) => {
   debug('Providing:', typeof target === 'function' ? target.name : target, `(${_container.guid})\n\t\tin`, module.parent.filename);
 
-  return realProvide(target, callback);
+  return realProvide(target);
 };
 
-const _fluentProvide: IFluentProvide = makeFluentProvideDecorator(_container);
+const _fluentProvide = makeFluentProvideDecorator(_container);
 
 //
 // create a unique, global symbol name
@@ -48,8 +48,8 @@ if (!(globalSymbols.indexOf(CONTAINER) > -1)) {
 
 const singleton: {
   container: Container;
-  provide: IProvide;
-  fluentProvide: IFluentProvide;
+  provide(target: any): any;
+  fluentProvide(target: any): any;
 } = <any> {};
 
 Object.defineProperty(singleton, 'provide', {

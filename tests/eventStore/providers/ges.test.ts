@@ -5,9 +5,8 @@ import { AggregateRoot, IDomainEvent, GesEventStore, GuidIdentity } from '@cashf
 
 const Debug = require('debug')('test');
 
-class DumbEvent extends IDomainEvent {
+class DumbEvent implements IDomainEvent {
   constructor(public randomVal: any) {
-    super();
   }
 }
 

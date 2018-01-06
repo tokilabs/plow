@@ -1,3 +1,4 @@
+docs/
 src/
 tests/
 tools/
@@ -7,5 +8,6 @@ typings/
 .settings/
 .travis.yml
 .vscode/
+book.json
 tslint.json
 tsconfig.json

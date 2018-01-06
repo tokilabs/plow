@@ -1,3 +1,6 @@
+const ConstructorParams = Symbol.for('plow:ValueObject.ConstructorParams');
+const Constructor = Symbol.for('plow:ValueObject.Constructor');
+
 /**
  * Base class for ValueObject's
  *
@@ -17,8 +20,8 @@ export class ValueObject<TObject> {
    * @param constructParams Name of the properties to pass to constructor IN ORDER
    */
   constructor(private construct: new(...args: any[]) => TObject, constructParams: (keyof TObject)[]) {
-    this[Symbol('Constructor')] = construct;
-    this[Symbol('ConstructorParams')] = constructParams;
+    this[Constructor] = construct;
+    this[ConstructorParams] = constructParams;
   }
 
   public equals(other: ValueObject<TObject>): boolean {
@@ -33,8 +36,8 @@ export class ValueObject<TObject> {
   }
 
   protected newInstanceWith(updatedProps: Partial<TObject>): TObject {
-    return new this[Symbol('Constructor')](
-        ...(<any[]>this[Symbol('ConstructorParams')])
+    return new this[Constructor](
+        ...(<any[]>this[ConstructorParams])
         .map(p =>
           updatedProps.hasOwnProperty(p) ? updatedProps[p] : (<any>this)[p]));
   }

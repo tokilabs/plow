@@ -4,3 +4,4 @@ typings/
 *.log
 *.tgz
 /tests/compiled
+_book

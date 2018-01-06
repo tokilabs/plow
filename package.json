@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/plow",
-  "version": "0.4.0-RC.1",
+  "version": "0.4.0-RC.3",
   "description": "Library for validating input data and parameters",
   "author": "Saulo Vallory <saulo@cashfarm.com>",
   "license": "MIT",
@@ -32,11 +32,11 @@
     "tsc": "node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@cashfarm/lang": "^0.8.0",
+    "@cashfarm/lang": "^0.8.4",
     "amqplib": "^0.5.1",
     "bluebird": "^3.5.0",
     "class-transformer": "^0.1.8",
-    "inversify": "^4.3.0",
+    "inversify": "3",
     "inversify-binding-decorators": "^3.0.0",
     "servicebus": "^2.0.10",
     "uuid": "3.x"

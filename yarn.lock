@@ -38,9 +38,9 @@
     imurmurhash "^0.1.4"
     slide "^1.1.5"
 
-"@cashfarm/lang@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.npmjs.org/@cashfarm/lang/-/lang-0.8.0.tgz#85b3d48813d8c97364cb570f18cd6e1184daaf94"
+"@cashfarm/lang@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.npmjs.org/@cashfarm/lang/-/lang-0.8.4.tgz#0aee0e3f12ca75881ddea2cae8b005d766258fbc"
   dependencies:
     class-transformer "^0.1.8"
     reflect-metadata "^0.1.10"
@@ -2622,9 +2622,9 @@ inversify-binding-decorators@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/inversify-binding-decorators/-/inversify-binding-decorators-3.0.0.tgz#3784d5ab9ea675915dfff4711434da4b27b78521"
 
-inversify@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.npmjs.org/inversify/-/inversify-4.3.0.tgz#d2ecd2ae18340e7f1ab5148a3e44b87080391366"
+inversify@3:
+  version "3.3.0"
+  resolved "https://registry.npmjs.org/inversify/-/inversify-3.3.0.tgz#57ca2e0aaac7b54aa5018ad69a10c5aba366e96e"
 
 irregular-plurals@^1.0.0:
   version "1.3.0"

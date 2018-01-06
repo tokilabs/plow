@@ -4,9 +4,10 @@ import { expect } from 'chai';
 import { ValueObject } from '@cashfarm/plow';
 
 class TestVO extends ValueObject<TestVO> {
-  constructor(
-      public readonly name: string,
-      public readonly value: number) {
+  public readonly name: string;
+  public readonly value: number;
+
+  constructor(name: string, value: number) {
     super(TestVO, ['name', 'value']);
   }
 
@@ -19,7 +20,7 @@ class TestVO extends ValueObject<TestVO> {
   }
 }
 
-test('Updating a VO property should return a new, modified, instance.', t => {
+test('Updating a ValueObject property should return a new, modified, instance.', t => {
   const tvo = new TestVO('Some Name', 1);
   const tvoNewName = new TestVO('Another Name', 1);
   const tvoNewVal = new TestVO('Some Name', 2);
