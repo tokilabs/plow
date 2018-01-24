@@ -10,6 +10,21 @@ import { IDomainEvent, IAggregateRoot } from './domain';
  * @interface IPlowConfig
  */
 export interface IPlowConfig {
+  /**
+   * Options for messaging (Events and Commands)
+   */
+  messaging: {
+    /**
+     * Which transport to use for sending commands and publishing events
+     *
+     * @type {('rabbitmq' | 'inmemory')}
+     */
+    transport: 'rabbitmq' | 'inmemory'
+  };
+
+  /**
+   * Whether or not Plow should require an explicit Apply method for each event the Aggregate Root is to handle
+   */
   requireApplyForEachEvent: boolean;
 
   defaultApplyFn(aggt: IAggregateRoot<any>, event: IDomainEvent): void;

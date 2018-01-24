@@ -5,8 +5,7 @@ import { Symbols } from './symbols';
 
 export const Projections = Symbol.for('cashfarm.plow.projections');
 
-
-export function Projection(...events: ConcreteType<any>[]): ClassDecorator {
+export function Projection(...events: ConcreteType<any>[]) {
   // @todo Check if there is a method to handle each of the events and throw an error if none is found
   return (target: ConcreteType<any>) => {
     if (!target[Symbols.ProjectionEvents]) {
@@ -20,5 +19,5 @@ export function Projection(...events: ConcreteType<any>[]): ClassDecorator {
           target[Symbols.ProjectionEvents].push(e);
       });
     }
-  }
+  };
 }
