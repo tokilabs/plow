@@ -1,0 +1,363 @@
+import * as Redis from 'redis';
+import * as Async from 'async';
+
+export interface IEnvelope<T>{
+  body: T;
+  correlationId: string;
+  messageId: string;
+  TTL?: number;
+}
+
+export interface ICommand {
+  id: string;
+  name: string;
+}
+
+export interface ICommandHandler {
+  handleCommand(commandToHandle: IEnvelope<ICommand>, callback: (error: any) => void): void;
+}
+
+export interface IEvent {
+  sourceId: string;
+  name: string;
+}
+
+export interface IEventHandler {
+  handleEvent(eventToHandle: IEnvelope<IEvent>, callback: (error: any) => void): void;
+}
+
+export class HandlerRegistry implements ICommandHandler, IEventHandler {
+
+  public commandsRegistry: any;
+  public eventsRegistry: any;
+
+  constructor() {
+      this.commandsRegistry = {};
+      this.eventsRegistry = {};
+  }
+
+  public registerCommandHandler(commandName: string, commandHandler: ICommandHandler) {
+    let handlers = this.commandsRegistry[commandName];
+    if (!handlers) {
+      handlers = [];
+    }
+
+    handlers.push(commandHandler);
+    this.commandsRegistry[commandName] = handlers;
+  }
+
+  public registerEventHandler(eventName: string, eventHandler: IEventHandler) {
+    let handlers = this.eventsRegistry[eventName];
+    if (!handlers) {
+      handlers = [];
+    }
+
+    handlers.push(eventHandler);
+    this.eventsRegistry[eventName] = handlers;
+  }
+
+  public handleCommand(commandToHandle: IEnvelope<ICommand>, callback: (error: any) => void) {
+    const handlers = this.commandsRegistry[commandToHandle.body.name];
+    if (!handlers) return callback(null);
+
+    Async.forEach(
+      handlers,
+      (handler: ICommandHandler, cb: (error: any) => void) => {
+        handler.handleCommand(commandToHandle, cb);
+      },
+      callback);
+  }
+
+  public handleEvent(eventToHandle: IEnvelope<IEvent>, callback: (error: any) => void) {
+    const handlers = this.eventsRegistry[eventToHandle.body.name];
+    if (!handlers) return callback(null);
+
+    Async.forEach(
+      handlers,
+      (handler: IEventHandler, cb: (error: any) => void) => {
+        handler.handleEvent(eventToHandle, cb);
+      },
+      callback);
+  }
+}
+
+export interface IVersionedEvent extends IEvent {
+  version: number;
+}
+
+export interface IEventSourced {
+  getId(): string;
+  getVersion(): number;
+  getEvents(): IVersionedEvent[];
+}
+
+export class EventSourced implements IEventSourced {
+  private id: string;
+  private version: number;
+  private events: IVersionedEvent[];
+
+  constructor(id: string) {
+    this.id = id;
+    this.events = [];
+    this.version = 0;
+  }
+
+  public getId(): string {
+     return this.id;
+  }
+
+  public getVersion(): number {
+    return this.version;
+  }
+
+  public getEvents(): IVersionedEvent[] {
+    return this.events;
+  }
+
+  public loadFromEvents(events: IVersionedEvent[]): void {
+    events.forEach(item => {
+        this[`on${item.name}`](item);
+        this.version = item.version;
+      });
+  }
+
+  public update(versionedEvent: IVersionedEvent): void {
+    versionedEvent.sourceId = this.id;
+    versionedEvent.version = this.version + 1;
+    this[`on${versionedEvent.name}`](versionedEvent);
+    this.version = versionedEvent.version;
+    this.events.push(versionedEvent);
+  }
+}
+
+export class RedisResource {
+  public options: IRedisConnectionOptions;
+
+  private client: Redis.RedisClient;
+
+  constructor(options: IRedisConnectionOptions) {
+    this.options = options;
+  }
+
+  public onConnected?(): void;
+
+  public getClient(): Redis.RedisClient {
+    return this.client;
+  }
+
+  public connect(callback: (error: any) => void ): void {
+    this.client = Redis.createClient(this.options.port, this.options.host);
+
+    this.client.on('error', (errorMessage: any) => {
+      if (errorMessage.indexOf && errorMessage.indexOf('connect') >= 0) {
+        callback(errorMessage);
+      }
+    });
+
+    this.client.on('ready', () => {
+        if (this.onConnected) {
+          this.onConnected();
+        }
+
+        callback(null);
+    });
+  }
+}
+
+// tslint:disable:max-classes-per-file
+export class RedisCommandReceiver extends RedisResource {
+  public commandReceiver: ICommandHandler;
+  public paused: boolean;
+
+  constructor(options: IRedisConnectionOptions, commandReceiver: ICommandHandler) {
+    super(options);
+    this.commandReceiver = commandReceiver;
+  }
+
+  public onConnected() {
+    const receiveLoop = () => {
+      if (this.paused) return setTimeout(receiveLoop, 500);
+
+      this.getClient().rpoplpush('messaging.queuedcommands', 'messaging.activecommands', (error: any, result: any) => {
+        if (result) {
+          const command = JSON.parse(result);
+
+          return this.commandReceiver.handleCommand(command, (err: any) => {
+            this.getClient().lrem('messaging.activecommands', 0, result, (err2: any, count: any) => {
+              if (count !== 1)throw new Error(`invalid count ${count}`);
+              receiveLoop();
+            });
+          });
+        }
+
+        setTimeout(receiveLoop, 500);
+      });
+    };
+
+    receiveLoop();
+  }
+}
+
+export class RedisEventReceiver extends RedisResource {
+
+  public eventReceiver: IEventHandler;
+  public paused: boolean;
+
+  constructor(options: IRedisConnectionOptions, eventReceiver: IEventHandler) {
+    super(options);
+    this.eventReceiver = eventReceiver;
+  }
+
+  public onConnected() {
+    const receiveLoop = () => {
+      if (this.paused) return setTimeout(receiveLoop, 500);
+
+      this.getClient().rpoplpush('messaging.queuedevents', 'messaging.activeevents', (error: any, result: any) => {
+        if (result) {
+          const _event = JSON.parse(result);
+
+          return this.eventReceiver.handleEvent(_event, (err: any) => {
+            this.getClient().lrem('messaging.activeevents', 0, result, (err3: any, count: any) => {
+              if (count !== 1) throw new Error(`invalid "messaging.activeevents" count ${count}`);
+              receiveLoop();
+            });
+          });
+        }
+
+        setTimeout(receiveLoop, 500);
+      });
+    };
+
+    receiveLoop();
+  }
+}
+
+export class RedisCommandBus extends RedisResource implements ICommandHandler {
+  constructor(options: IRedisConnectionOptions) {
+    super(options);
+  }
+
+  public handleCommand(commandToHandle: IEnvelope<ICommand>, callback: (error: any) => void): void {
+    const commandSerialized = JSON.stringify(commandToHandle);
+    this.getClient().rpush('messaging.queuedcommands', commandSerialized, callback);
+  }
+}
+
+export class RedisEventBus extends RedisResource implements IEventHandler {
+  constructor(options: IRedisConnectionOptions) {
+    super(options);
+  }
+
+  public handleEvent(eventToHandle: IEnvelope<IEvent>, callback: (error: any) => void): void {
+    const eventSerialized = JSON.stringify(eventToHandle);
+    this.getClient().rpush('messaging.queuedevents', eventSerialized, callback);
+  }
+}
+
+export interface IEventSourcedRepository {
+  getEventsByAggregateId(id: string, callback: (error: any, events: IVersionedEvent[]) => void): void;
+  saveEventsByAggregateId(id: string, events: IVersionedEvent[],  callback: (error: any) => void): void;
+}
+
+export class InMemoryEventSourcedRepository implements IEventSourcedRepository {
+  private db: any;
+
+  constructor() {
+      this.db = {};
+  }
+
+  public getEventsByAggregateId(id: string, callback: (error: any, events: IVersionedEvent[]) => void) {
+    if (!this.db[id]) return callback(null, []);
+
+    const aggregateEvents = this.db[id];
+    callback(null, aggregateEvents);
+  }
+
+  public saveEventsByAggregateId(id: string, events: IVersionedEvent[],  callback: (error: any) => void) {
+    let aggregateEvents = this.db[id];
+    if (!aggregateEvents) aggregateEvents = [];
+    aggregateEvents = aggregateEvents.concat(events);
+    this.db[id] = aggregateEvents;
+    callback(null);
+  }
+}
+
+export interface IRedisConnectionOptions {
+  host: string;
+  port: number;
+}
+
+export class EventSourceRepositoryWithNotifications implements IEventSourcedRepository {
+
+  public repository: IEventSourcedRepository;
+  public onSaveCallback: (id: string, events: IVersionedEvent[]) => void;
+
+  constructor(repository: IEventSourcedRepository, onSaveCallback: (id: string, events: IVersionedEvent[]) => void) {
+    this.repository = repository;
+    this.onSaveCallback = onSaveCallback;
+  }
+
+  public getEventsByAggregateId(id: string, callback: (error: any, events: IVersionedEvent[]) => void) {
+    this.repository.getEventsByAggregateId(id, callback);
+  }
+
+  public saveEventsByAggregateId(id: string, events: IVersionedEvent[],  callback: (error: any) => void) {
+    this.repository.saveEventsByAggregateId(id, events, (error: any) => {
+      if (!error) {
+        this.onSaveCallback(id, events);
+      }
+
+      callback(error);
+    });
+  }
+}
+
+export class RedisEventSourcedRepository extends RedisResource implements IEventSourcedRepository {
+  constructor(options: IRedisConnectionOptions) {
+      super(options);
+  }
+
+  public getEventsByAggregateId(id: string, callback: (error: any, events: IVersionedEvent[]) => void) {
+    this.getClient().lrange(`eventsourcing.aggregate: ${id}`, 0, -1, (error: any, results: any) => {
+      this.constructResultsResponse(error, results, callback);
+    });
+  }
+
+  public saveEventsByAggregateId(id: string, events: IVersionedEvent[],  callback: (error: any) => void) {
+    if (!events || events.length === 0) {
+      callback(null);
+
+      return;
+    }
+
+    Async.forEachSeries(
+      events,
+      (versionedEvent: IVersionedEvent, cb: (error: any) => void) => {
+        const serializedEvent = JSON.stringify(versionedEvent);
+        this.getClient().rpush(`eventsourcing.aggregate: ${versionedEvent.sourceId}`, serializedEvent, (error: any) => {
+          if (error)
+            return cb(error);
+
+          cb(null);
+        });
+      },
+      callback);
+  }
+
+  private constructResultsResponse(error: any, results: string[], callback: (error: any, results: IVersionedEvent[]) => void) {
+    if (error)
+      return callback(error, null);
+
+    if (results && results.length > 0) {
+        const arr: any = [];
+
+        results.forEach((item) => {
+            arr.push(JSON.parse(item));
+        });
+
+        return callback(null, arr);
+    }
+
+    callback(null, []);
+  }
+}

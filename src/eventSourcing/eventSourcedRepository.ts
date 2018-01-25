@@ -2,7 +2,7 @@ import { injectable, unmanaged } from 'inversify';
 
 import { Guid, ConcreteType } from '@cashfarm/lang';
 
-import { AggregateRoot, IDomainEvent, Identity, IEventPublisher, IRepositoryOf } from '../domain';
+import { AggregateRoot, IDomainEvent, Identity, IEventBus, IRepositoryOf } from '../domain';
 import { IEventStore } from './iEventStore';
 import { AggregateFactory } from './aggregateFactory';
 
@@ -15,7 +15,7 @@ export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<
   public constructor(
     @unmanaged() protected storage: IEventStore,
     @unmanaged() protected aggtClass: ConcreteType<TAggregate>,
-    @unmanaged() protected eventPublisher?: IEventPublisher) {
+    @unmanaged() protected eventBus?: IEventBus) {
   }
 
   public save(aggregate: TAggregate): Promise<IDomainEvent[]> {
@@ -23,8 +23,8 @@ export abstract class EventSourcedRepositoryOf<TAggregate extends AggregateRoot<
       .then(nextVersion => {
         const events = aggregate.uncommittedChanges.slice();
 
-        if (this.eventPublisher)
-            events.map(e => this.eventPublisher.publish(e));
+        if (this.eventBus)
+            events.map(e => this.eventBus.publish(e));
 
         aggregate.markChangesAsCommitted();
 

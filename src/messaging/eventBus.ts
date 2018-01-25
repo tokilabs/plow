@@ -1,17 +1,11 @@
 import { Type } from '@cashfarm/lang';
-import { Handle, IEventPublisher, ISubscribeTo, IDomainEvent } from '../domain';
+import { Handle, ISubscribeTo, IDomainEvent } from '../domain';
 import { Symbols } from '../symbols';
+import { IMessageTransport } from './transports/iMessageTransport';
 
 const debug = require('debug')('plow:events');
 
-import { IMessageTransport } from './transports/iMessageTransport';
-
-export const IEventBus = Symbol('IEventBus');
-export interface IEventBus {
-  register<T extends IDomainEvent & Type>(evt: T, handler: any): void;
-}
-
-export class EventBus implements IEventBus, IEventPublisher {
+export class EventBus implements IEventBus {
   constructor(private serviceName: string, private transport: IMessageTransport) {
     // subscribe this instance to ALL events
     // this way the local microservice can choose

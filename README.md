@@ -74,16 +74,16 @@ Repositories are how we call the classes that permanently store aggregate roots.
 If you are using [GetEventStore](http://geteventstore.com) to store your aggregates, all you
 need to do is extend the class `EventSourcedRepositoryOf<TAggregate, TAggtId>`;
 
-If you are using Plow's container, you can simply inject `IEventStore` and `IEventPublisher` as
+If you are using Plow's container, you can simply inject `IEventStore` and `IEventBus` as
 they are already configured in the inversify container.
 
 ```
 export class TaskRepository extends EventSourcedRepositoryOf<Task, Guid> {
   constructor(
     @inject(IEventStore) protected storage: IEventStore,
-    @inject(IEventPublisher) eventPublisher: IEventPublisher
+    @inject(IEventBus) eventBus: IEventBus
   ) {
-    super(storage, Campaign, eventPublisher);
+    super(storage, Campaign, eventBus);
   }
 }
 ```

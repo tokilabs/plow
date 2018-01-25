@@ -1,0 +1,32 @@
+{
+  "root": "docs",
+  "language": "en",
+  "plugins": [
+    "theme-api",
+    "alerts",
+    "include",
+    "include-highlight",
+    "highlightjs"
+  ],
+  "pluginsConfig": {
+    "theme-api": {
+      "languages": [
+        {
+          "lang": "js",
+          "name": "JavaScript",
+          "default": true
+        },
+        {
+          "lang": "ts",
+          "name": "Typescript"
+        }
+      ]
+    },
+    "anchorjs": {
+      "icon": "#",
+      "placement": "left",
+      "visible": "always",
+      "class": "anchor-target"
+    }
+  }
+}
