@@ -6,9 +6,12 @@ import { Symbols } from '../symbols';
 import { EventsRegistry } from '../eventSourcing';
 
 /**
- * @deprecated Use the IDomainEvent class instead
+ * IDomain event symbol
+ *
+ * Should be used for binding domain events to inversion of control containers
  */
 export const IDomainEvent = Symbol('IDomainEvent');
+
 // tslint:disable-next-line:no-empty-interface
 export interface IDomainEvent {}
 

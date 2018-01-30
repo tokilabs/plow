@@ -1,10 +1,10 @@
 import { Identity } from './identity';
-import { AggregateRoot } from './aggregateRoot';
 import { Guid } from '@cashfarm/lang';
+import { IEntity } from './entity';
 
 export const IRepositoryOf = Symbol('IRepositoryOf');
 
-export interface IRepositoryOf<TAggregate extends AggregateRoot<TId>, TId extends Identity<any> | Guid> {
+export interface IRepositoryOf<TAggregate extends IEntity<TId>, TId> {
   getById(id: TId): Promise<TAggregate>;
   save(aggregate: TAggregate): void;
 }

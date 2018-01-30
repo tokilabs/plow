@@ -1,4 +1,4 @@
-import { IDomainEvent } from './domainEvent';
+import { IDomainEvent } from '../domain/domainEvent';
 
 export const IEventStream = Symbol('IEventStream');
 export interface IEventStream extends Iterable<IDomainEvent> {

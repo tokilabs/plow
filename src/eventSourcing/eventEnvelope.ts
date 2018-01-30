@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { Guid } from '@cashfarm/lang';
 
 import { Identity, IDomainEvent, IAggregateRoot } from '../domain';
+import { IESAggregateRoot } from 'eventSourcing/esAggregateRoot';
 
 export interface IEventEnvelope {
   readonly id: Guid;
@@ -44,7 +45,7 @@ export class EventEnvelope implements IEventEnvelope {
       this.createdAt = createdAt || new Date();
   }
 
-  public static wrap(aggt: IAggregateRoot<any>, event: IDomainEvent, metadata?: Object): EventEnvelope {
+  public static wrap(aggt: IESAggregateRoot<any>, event: IDomainEvent, metadata?: Object): EventEnvelope {
     return new EventEnvelope(
       new Guid(),
       String(Reflect.getMetadata(Symbol.for('FQN'), aggt)),

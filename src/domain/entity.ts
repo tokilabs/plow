@@ -23,6 +23,7 @@ export abstract class Entity<TId extends Identity<any> | Guid> implements IEntit
 
   /**
    * Persistent identity value for the Entity
+   *
    * @readonly
    * @type {TId}
    */

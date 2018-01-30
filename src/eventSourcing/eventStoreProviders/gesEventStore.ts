@@ -1,18 +1,19 @@
 import * as Bluebird from 'bluebird';
-import * as uuid from 'uuid';
+import { classToPlain, deserialize } from 'class-transformer';
 import * as EventStore from 'node-eventstore-client';
 import { injectable, unmanaged } from 'inversify';
-
-const  debug = require('debug')('plow:events:ges');
+import * as uuid from 'uuid';
 
 import { Guid, Type, requireByFQN } from '@cashfarm/lang';
 
 import { AggregateRoot, Identity, IDomainEvent } from '../../domain';
-import { AggregateFactory } from '../aggregateFactory';
+import { ESAggregateFactory } from '../aggregateFactory';
 import { EventEnvelope } from '../eventEnvelope';
 import { IEventStore } from '../iEventStore';
 import { Symbols } from '../../symbols';
-import { classToPlain, deserialize } from 'class-transformer';
+import { ESAggregateRoot } from 'eventSourcing/esAggregateRoot';
+
+const  debug = require('debug')('plow:events:ges');
 
 @injectable()
 export class GesEventStore implements IEventStore {
@@ -22,7 +23,7 @@ export class GesEventStore implements IEventStore {
     @unmanaged() private settings: EventStore.ConnectionSettings = {}) {
   }
 
-  public save<T extends AggregateRoot<Identity<Guid>>>(aggregate: T): Promise<number> {
+  public save<T extends ESAggregateRoot<Identity<Guid>>>(aggregate: T): Promise<number> {
     return this.saveEvents(aggregate.constructor, aggregate.id.value, aggregate.uncommittedChanges, aggregate.version)
       .then(results => results.reduce<number>((r, c) => c.nextExpectedVersion, 0));
   }

@@ -1,6 +1,6 @@
 const servicebus = require('servicebus');
 
-import { Handle, IEventBus, ISubscribeTo, IDomainEvent } from '../../../domain';
+import { Handle, IDomainEvent } from '../../../domain';
 import { Symbols } from '../../../symbols';
 
 const debug = require('debug')('plow:events');
