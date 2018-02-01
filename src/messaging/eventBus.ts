@@ -2,7 +2,7 @@ import { Type, Exception } from '@cashfarm/lang';
 
 import { Handle, IDomainEvent } from '../domain';
 import { Symbols } from '../symbols';
-import { IEventBus } from 'eventSourcing/iEventBus';
+import { IEventBus } from '../eventSourcing/iEventBus';
 import { IMessageTransport } from './transports/iMessageTransport';
 import { IHandlerFunction } from './iHandlerFunction';
 
@@ -50,6 +50,6 @@ export class EventBus implements IEventBus {
   }
 
   private getEventName(evt: IDomainEvent) {
-    return evt[Symbols.EventName] || evt.constructor[Symbols.EventName] || evt.constructor.name;
+    return Reflect.getMetadata(Symbols.EventName, evt.constructor) || evt.constructor.name;
   }
 }

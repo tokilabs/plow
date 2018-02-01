@@ -1,3 +1,4 @@
+export { PlowConfig } from './config';
 export * from './container';
 export * from './container/decorators';
 export * from './decorators';

@@ -123,8 +123,7 @@ export class TaskProjections {
 ### 0.4
 
 - Plow now has an internal inversify container for dependency injection
-- Use `@Projection`, `@Controller` and `@Event` to register the respective classes
--
+- Use `@Projection`, `@Controller` and `@DomainEvent` to register the respective classes
 - No need for `[Symbol.EventLoader]()` and `[Symbol.MAPPER]()` methods
 
 ## Roadmap
@@ -137,30 +136,3 @@ export class TaskProjections {
     - AggregateRoots
     - Endpoints
     - Projections
-
-#### Event deserialization
-
-Goal: To get rid of the static [EventLoader]() method
-
-Proposal 1:
-    - if Event.fromJson()
-    - else:
-        - Instantiate without calling the constructor
-        [ if we can list properties and it's types]
-        - Iterate properties as P
-            - if P is an array recurse
-            - if typeof P not in [number,string,boolean]
-                - if typeof P is Date: do auto conversion from string to Date
-                - if typeof P is ClassX
-                    - if ClassX.fromJson() exists, call it
-                    - else: throw error requiring dev to implement Event.fromJSON()
-
-Proposal 2:
-    Always instantiate events passing a single parameter (data)
-
-Proposal 3:
-    On service start
-    instantiate each event once passing a sequence of numbers as args eg: new SomeEvent(1,2,3,4,5,6,7,8,9,10...)
-    Then inspect the values of generated instance properties to determine which properties are passed to the constructor
-        and in which positions creating a constructor arguments map
-    Save that info as metadata and use it to instantiate new events

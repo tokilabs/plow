@@ -2,17 +2,17 @@ import { injectable, unmanaged } from 'inversify';
 
 import { Guid, ConcreteType } from '@cashfarm/lang';
 
-import { IDomainEvent, Identity, IRepositoryOf } from '../domain';
-import { ESAggregateFactory } from './aggregateFactory';
+import { IDomainEvent, Identity, IRepository } from '../domain';
+import { ESAggregateFactory } from './esAggregateFactory';
 import { IEventStore } from './iEventStore';
 import { IEventBus } from './iEventBus';
-import { ESAggregateRoot } from 'eventSourcing/esAggregateRoot';
+import { ESAggregateRoot } from './esAggregateRoot';
 
 const debug = require('debug')('plow:events:repository');
 
 @injectable()
-export abstract class EventSourcedRepositoryOf<TAggregate extends ESAggregateRoot<TId>, TId extends Identity<Guid> | Guid>
-                          implements IRepositoryOf<TAggregate, TId> {
+export abstract class ESRepository<TAggregate extends ESAggregateRoot<TId>, TId extends Identity<Guid> | Guid>
+                          implements IRepository<TAggregate, TId> {
 
   public constructor(
     @unmanaged() protected storage: IEventStore,

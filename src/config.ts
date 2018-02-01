@@ -11,6 +11,13 @@ import { IDomainEvent, IAggregateRoot } from './domain';
  */
 export interface IPlowConfig {
   /**
+   * The name of your application package
+   *
+   * This is used as default when FQNs don't specify a package
+   */
+  appPackageName?: string;
+
+  /**
    * Options for messaging (Events and Commands)
    */
   messaging: {
@@ -82,5 +89,4 @@ Object.freeze(singleton);
 // export the singleton API only
 // -----------------------------
 
-export const config = singleton.instance;
-export default config;
+export const PlowConfig = singleton.instance;

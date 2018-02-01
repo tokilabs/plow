@@ -4,7 +4,7 @@ import { IEntity } from './entity';
 
 export const IRepositoryOf = Symbol('IRepositoryOf');
 
-export interface IRepositoryOf<TAggregate extends IEntity<TId>, TId> {
+export interface IRepository<TAggregate extends IEntity<TId>, TId> {
   getById(id: TId): Promise<TAggregate>;
   save(aggregate: TAggregate): void;
 }

@@ -3,7 +3,7 @@
 import { Identity, GuidIdentity } from './identity';
 
 import { Symbols } from '../symbols';
-import { EventsRegistry } from '../eventSourcing';
+import { PlowConfig } from '../config';
 
 /**
  * IDomain event symbol
@@ -16,24 +16,18 @@ export const IDomainEvent = Symbol('IDomainEvent');
 export interface IDomainEvent {}
 
 /**
- * Decorates the class as a Domain Event setting a name different than the class name
+ * Registers the class as a Domain Event
  * @param name The name of the event
  */
-export function DomainEvent(name?: string): (target: ConcreteType<IDomainEvent>) => void;
-/**
- * Do not use this. Either use `@DomainEvent` or `@DomainEvent("customName")`
- * @private
- */
-export function DomainEvent(target: ConcreteType<IDomainEvent>): void;
-export function DomainEvent(nameOrTarget?: string | ConcreteType<IDomainEvent>) {
-  if (typeof nameOrTarget !== 'string') {
-    nameOrTarget[Symbols.EventName] = nameOrTarget.name;
-    EventsRegistry.add(nameOrTarget.name, nameOrTarget);
+export function DomainEvent(fqn: string, eventName?: string): (target: ConcreteType<IDomainEvent>) => void {
+  if (fqn.indexOf(':') < 0) {
+    fqn += `${PlowConfig.appPackageName}:`;
   }
-  else {
-    return (target: ConcreteType<IDomainEvent>) => {
-      target[Symbols.EventName] = name || target.name;
-      EventsRegistry.add(name || target.name, target);
-    };
-  }
+
+  return (target: ConcreteType<IDomainEvent>) => {
+    Reflect.defineMetadata(Symbols.EventFQN, fqn, target);
+
+    if (eventName)
+      Reflect.defineMetadata(Symbols.EventName, eventName, target);
+  };
 }

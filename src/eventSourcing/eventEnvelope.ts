@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { Guid } from '@cashfarm/lang';
 
 import { Identity, IDomainEvent, IAggregateRoot } from '../domain';
-import { IESAggregateRoot } from 'eventSourcing/esAggregateRoot';
+import { IESAggregateRoot } from './esAggregateRoot';
 
 export interface IEventEnvelope {
   readonly id: Guid;

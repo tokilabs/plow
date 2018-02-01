@@ -4,7 +4,7 @@ import { Exclude, plainToClass } from 'class-transformer';
 import { AggregateRoot, IAggregateRoot, Identity, IDomainEvent } from '../domain';
 import { EventEnvelope } from './eventEnvelope';
 import { Symbols } from '../symbols';
-import config from '../config';
+import { PlowConfig } from '../config';
 
 const APPLY_CHANGE = Symbol('@cashfarm/plow:ESAggregate.APPLY_CHANGE');
 const LOAD_FROM_EVENTS = Symbol('@cashfarm/plow:ESAggregate.LOAD_FROM_EVENTS');
@@ -43,16 +43,11 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
     t._events = [];
 
     const mappedEvts = events.map(ee => {
+      // Get the event class
       const klass = requireByFQN(ee.eventType);
 
-      const e = plainToClass(klass, ee.event);
-
-      if (e.constructor !== klass) {
-        throw new Error(`${klass.name}[EventLoader]() method did not return an instance of ${klass.name}.
-          It returned a ${e.constructor ? e.constructor.name : typeof e} instead`);
-      }
-
-      return e;
+      // deserialize to a class instance
+      return plainToClass(klass, ee.event);
     });
 
     t[LOAD_FROM_EVENTS](mappedEvts);
@@ -98,7 +93,7 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
    * @memberof ESAggregateRoot
    */
   private [APPLY_CHANGE](event: IDomainEvent, isNew: boolean) {
-    const evtName = event[Symbols.EventName] || event.constructor[Symbols.EventName] || event.constructor.name;
+    const evtName = Reflect.getMetadata(Symbols.EventName, event.constructor) || event.constructor.name;
 
     // Find out the method to apply the function to
     let applyEvent: string | symbol = `apply${evtName}`;
@@ -111,7 +106,7 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
     }
 
     if (!applyEvent || !(this[applyEvent] instanceof Function)) {
-      if (config.requireApplyForEachEvent) {
+      if (PlowConfig.requireApplyForEachEvent) {
         const actualImpl = this[applyEvent] instanceof Function ?
           `The aggregate ${this.constructor.name} property [Apply(${evtName})] is a ${typeof this[applyEvent]}` :
           `The Aggregate ${this.constructor.name} has no apply method for ${evtName}`;
@@ -123,7 +118,7 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
           ${actualImpl}`);
       }
 
-      config.defaultApplyFn(this, event);
+      PlowConfig.defaultApplyFn(this, event);
 
       return;
     }

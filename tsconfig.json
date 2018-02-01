@@ -22,14 +22,7 @@
     "lib" : [
       "es6",
       "dom"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "src/*"
-      ]
-    }
+    ]
   },
   "include": [
     "src/**/*.ts"

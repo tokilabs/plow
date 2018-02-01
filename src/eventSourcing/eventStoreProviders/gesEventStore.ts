@@ -7,11 +7,11 @@ import * as uuid from 'uuid';
 import { Guid, Type, requireByFQN } from '@cashfarm/lang';
 
 import { AggregateRoot, Identity, IDomainEvent } from '../../domain';
-import { ESAggregateFactory } from '../aggregateFactory';
+import { ESAggregateFactory } from '../esAggregateFactory';
 import { EventEnvelope } from '../eventEnvelope';
 import { IEventStore } from '../iEventStore';
 import { Symbols } from '../../symbols';
-import { ESAggregateRoot } from 'eventSourcing/esAggregateRoot';
+import { ESAggregateRoot } from '../../eventSourcing/esAggregateRoot';
 
 const  debug = require('debug')('plow:events:ges');
 
@@ -83,9 +83,9 @@ export class GesEventStore implements IEventStore {
               aggregateType: aggtType.name,
               aggregateId: aggtId.toString()
             },
-            evt[Symbols.EventName]));
+            Reflect.getMetadata(Symbols.EventFQN, evt)));
 
-    debug(`Saving eve nts to stream ${streamName}`);
+    debug(`Saving events to stream ${streamName}`);
 
     return Promise.resolve(this.withConn(
       conn =>
