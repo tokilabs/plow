@@ -2,7 +2,9 @@ import { plainToClass, Exclude } from 'class-transformer';
 
 import { ConcreteType, requireByFQN, Guid } from '@cashfarm/lang';
 
-import { IEntity, Entity, IDomainEvent, Identity } from '../domain';
+import { IEntity, Entity } from './entity';
+import { IDomainEvent } from './domainEvent';
+import { Identity } from './identity';
 
 const debug = require('debug')('plow:aggregate');
 
