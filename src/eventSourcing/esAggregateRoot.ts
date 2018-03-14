@@ -105,7 +105,10 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
         applyEvent = Apply(constructor);
     }
 
-    if (!applyEvent || !(this[applyEvent] instanceof Function)) {
+    if (this[applyEvent] instanceof Function) {
+      this[applyEvent](event);
+    }
+    else {
       if (PlowConfig.requireApplyForEachEvent) {
         const actualImpl = this[applyEvent] instanceof Function ?
           `The aggregate ${this.constructor.name} property [Apply(${evtName})] is a ${typeof this[applyEvent]}` :
@@ -119,11 +122,7 @@ export class ESAggregateRoot<TId extends Identity<any> | Guid> extends Aggregate
       }
 
       PlowConfig.defaultApplyFn(this, event);
-
-      return;
     }
-
-    this[applyEvent](event);
 
     if (isNew)
       this._events.push(event);
