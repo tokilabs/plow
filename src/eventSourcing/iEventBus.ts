@@ -1,11 +1,11 @@
-import { Type } from '@cashfarm/lang';
+import { ConcreteType } from '@cashfarm/lang';
 
 import { IDomainEvent } from '../domain/domainEvent';
 
 export const IEventBus = Symbol.for('cashfarm.plow.IEventBus');
 
 export interface IEventBus {
-  subscribe<T extends IDomainEvent & Type>(evt: T, handler: Type): void;
-  unsubscribe<T extends IDomainEvent & Type>(evt: T, handler: Type): void;
-  publish<T extends IDomainEvent>(event: T): void;
+  subscribe(evt: IDomainEvent & ConcreteType<{}>, handler: Object): void;
+  unsubscribe(evt: IDomainEvent & ConcreteType<{}>, handler: Object): void;
+  publish(event: IDomainEvent): void;
 }

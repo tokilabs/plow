@@ -33,6 +33,6 @@ export class RabbitMQTransport implements IMessageTransport {
   }
 
   public publish(topic: string, message: any): void {
-    this.bus.public(topic, message);
+    this.bus.publish(topic, message);
   }
 }

@@ -1,10 +1,11 @@
-import { Type, Exception } from '@cashfarm/lang';
+import { Type, Exception, ConcreteType } from '@cashfarm/lang';
 
 import { Handle, IDomainEvent } from '../domain';
 import { Symbols } from '../symbols';
 import { IEventBus } from '../eventSourcing/iEventBus';
 import { IMessageTransport } from './transports/iMessageTransport';
 import { IHandlerFunction } from './iHandlerFunction';
+import { deserialize, plainToClass } from 'class-transformer';
 
 const debug = require('debug')('plow:events');
 
@@ -23,8 +24,9 @@ export class EventBus implements IEventBus {
     this.transport.subscribe(topic, (message: any) => handler(message.type, message.data));
   }
 
-  public subscribe<T extends IDomainEvent & Type>(evtClass: T, handler: IHandlerFunction) {
+  public subscribe(evtClass: IDomainEvent & ConcreteType<{}>, handler: Object) {
     const evtName = evtClass.name;
+
     debug(`Registering handler for ${evtName}:`, handler.constructor ?
         handler.constructor.name : handler.toString());
 
@@ -35,10 +37,14 @@ export class EventBus implements IEventBus {
 
     this.transport.subscribe(
       `${this.serviceName}.${evtName}`,
-      (name: string, event: IDomainEvent) => handler[Handle(evtClass)].apply(handler, [event]));
+      (name: string, event: any) => {
+        console.log(plainToClass(evtClass, event.content.data));
+        handler[Handle(evtClass)].apply(handler, [plainToClass(evtClass, event.content.data)]);
+      }
+    );
   }
 
-  public unsubscribe<T extends IDomainEvent & Type>(evtClass: T, handler: any) {
+  public unsubscribe(evtClass: IDomainEvent & ConcreteType<{}>, handler: any) {
     throw new Exception('not implemented');
   }
 
