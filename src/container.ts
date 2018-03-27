@@ -1,5 +1,3 @@
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
 import { Container, decorate, injectable, unmanaged } from 'inversify';
 import { makeProvideDecorator, makeFluentProvideDecorator } from 'inversify-binding-decorators';
 

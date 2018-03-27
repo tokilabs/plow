@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/plow",
-  "version": "0.5.0-rc.6",
+  "version": "0.5.0",
   "description": "Library for validating input data and parameters",
   "author": "Saulo Vallory <saulo@cashfarm.com>",
   "license": "MIT",
@@ -36,8 +36,8 @@
     "amqplib": "^0.5.1",
     "bluebird": "^3.5.0",
     "class-transformer": "^0.1.8",
-    "inversify": "3",
-    "inversify-binding-decorators": "^3.0.0",
+    "inversify": "^4.11.1",
+    "inversify-binding-decorators": "^3.2.0",
     "servicebus": "^2.0.10",
     "uuid": "3.x"
   },

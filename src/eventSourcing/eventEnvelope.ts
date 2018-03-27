@@ -1,6 +1,3 @@
-// tslint:disable-next-line:no-import-side-effect
-import 'reflect-metadata';
-
 import { Guid } from '@cashfarm/lang';
 
 import { Identity, IDomainEvent, IAggregateRoot } from '../domain';

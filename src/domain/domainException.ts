@@ -1,3 +1,5 @@
+import { Exception } from '@cashfarm/lang';
+
 /**
  * Base class for domain exceptions
  *
@@ -8,4 +10,4 @@
  * @class DomainException
  * @extends {Error}
  */
-export class DomainException extends Error {}
+export class DomainException extends Exception {}
