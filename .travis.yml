@@ -8,7 +8,7 @@ node_js:
   - 8.2.1
 
 before_install:
-  - yarn install -g typescript@2
+  - yarn add -g typescript@2
 
 install:
   - yarn
