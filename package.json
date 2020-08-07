@@ -35,7 +35,7 @@
     "@cashfarm/lang": "^0.8.4",
     "amqplib": "^0.5.1",
     "bluebird": "^3.5.0",
-    "class-transformer": "^0.1.8",
+    "class-transformer": "^0.3.1",
     "inversify": "^4.11.1",
     "inversify-binding-decorators": "^3.2.0",
     "servicebus": "^2.0.10",
