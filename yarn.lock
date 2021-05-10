@@ -218,10 +218,6 @@
   version "7.0.39"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.39.tgz#8aced4196387038113f6f9aa4014ab4c51edab3c"
 
-"@types/pubsub-js@^1.5.18":
-  version "1.5.18"
-  resolved "https://registry.npmjs.org/@types/pubsub-js/-/pubsub-js-1.5.18.tgz#dd12284c5e93b39874e62675702bf50c6f55e9ec"
-
 "@types/reflect-metadata@^0.0.5":
   version "0.0.5"
   resolved "https://registry.npmjs.org/@types/reflect-metadata/-/reflect-metadata-0.0.5.tgz#9c042bfa9803d577aad4f57dfbca4b7cae4286fe"
@@ -2825,8 +2821,8 @@ homedir-polyfill@^1.0.0, homedir-polyfill@^1.0.1:
     parse-passwd "^1.0.0"
 
 hosted-git-info@^2.1.4:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.5.0.tgz#6d60e34b3abbc8313062c3b798ef8d901a07af3c"
+  version "2.8.9"
+  resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz#dffc0bf9a21c02209090f2aa69429e1414daf3f9"
 
 htmlparser2@^3.9.1:
   version "3.9.2"
@@ -4703,10 +4699,6 @@ prr@~0.0.0:
 pseudomap@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
-
-pubsub-js@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/pubsub-js/-/pubsub-js-1.6.0.tgz#232d36485ce7905a54629ec5783d9f6f4c638026"
 
 punycode@^1.4.1:
   version "1.4.1"
